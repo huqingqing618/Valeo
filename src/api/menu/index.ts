@@ -18,7 +18,13 @@ export function getMenuAdmin(params?: object) {
 		params,
 	});
 }
-
+// export function getMenuAdmin(params?: object) {
+// 	return request({
+// 		url: 'index/getMenuList',
+// 		method: 'get',
+// 		params,
+// 	});
+// }
 /**
  * 获取后端动态路由菜单(test)
  * @link 参考：https://gitee.com/lyt-top/vue-next-admin-images/tree/master/menu
