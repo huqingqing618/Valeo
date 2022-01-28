@@ -27,6 +27,8 @@ export async function initBackEndControlRoutes() {
 	if (window.nextLoading === undefined) NextLoading.start();
 	// 无 token 停止执行下一步
 	if (!Session.get('token')) return false;
+	console.log(6666);
+	
 	// 触发初始化用户信息
 	store.dispatch('userInfos/setUserInfos');
 	// 获取路由菜单数据

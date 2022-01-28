@@ -31,31 +31,31 @@
 </template>
 
 <script lang="ts">
-import { toRefs, reactive, computed } from 'vue';
-import Account from '/@/views/login/component/account.vue';
-import Mobile from '/@/views/login/component/mobile.vue';
-import Scan from '/@/views/login/component/scan.vue';
-import { useStore } from '/@/store/index';
+import { toRefs, reactive, computed } from 'vue'
+import Account from '/@/views/login/component/account.vue'
+import Mobile from '/@/views/login/component/mobile.vue'
+import Scan from '/@/views/login/component/scan.vue'
+import { useStore } from '/@/store/index'
 export default {
 	name: 'loginIndex',
 	components: { Account, Mobile, Scan },
 	setup() {
-		const store = useStore();
+		const store = useStore()
 		const state = reactive({
 			tabsActiveName: 'account',
 			isTabPaneShow: true,
 			isScan: false,
-		});
+		})
 		// 获取布局配置信息
 		const getThemeConfig = computed(() => {
-			return store.state.themeConfig.themeConfig;
-		});
+			return store.state.themeConfig.themeConfig
+		})
 		return {
 			getThemeConfig,
 			...toRefs(state),
-		};
+		}
 	},
-};
+}
 </script>
 
 <style scoped lang="scss">

@@ -11,6 +11,7 @@ const userInfosModule: Module<UserInfosState, RootStateTypes> = {
 	mutations: {
 		// 设置用户信息
 		getUserInfos(state: any, data: object) {
+			
 			state.userInfos = data;
 		},
 	},

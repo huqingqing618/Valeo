@@ -13,9 +13,11 @@ import { initBackEndControlRoutes } from '/@/router/backEnd';
  * @method createRouter(options: RouterOptions): Router
  * @link 参考：https://next.router.vuejs.org/zh/api/#createrouter
  */
+let oldMenuList: any = formatTwoStageRoutes(formatFlatteningRoutes(dynamicRoutes));
+
 const router = createRouter({
 	history: createWebHashHistory(),
-	routes: staticRoutes,
+	routes: [...staticRoutes, ...oldMenuList],
 });
 
 /**
@@ -39,6 +41,7 @@ export function formatFlatteningRoutes(arr: any) {
 			arr = arr.slice(0, i + 1).concat(arr[i].children, arr.slice(i + 1));
 		}
 	}
+
 	return arr;
 }
 
@@ -60,6 +63,7 @@ export function formatTwoStageRoutes(arr: any) {
 			// 判断是否是动态路由（xx/:id/:name），用于 tagsView 等中使用
 			// 修复：https://gitee.com/lyt-top/vue-next-admin/issues/I3YX6G
 			if (v.path.indexOf('/:') > -1) {
+				//这判断的是动态路由传参
 				v.meta['isDynamic'] = true;
 				v.meta['isDynamicPath'] = v.path;
 			}
@@ -72,6 +76,7 @@ export function formatTwoStageRoutes(arr: any) {
 			}
 		}
 	});
+
 	return newArr;
 }
 
@@ -93,7 +98,7 @@ export function setCacheTagsViewRoutes() {
  * @returns 返回对比后有权限的路由项
  */
 export function hasRoles(roles: any, route: any) {
-	if (route.meta && route.meta.roles) return roles.some((role: any) => route.meta.roles.includes(role));
+	if (route.meta && route.meta.roles) return true;
 	else return true;
 }
 
@@ -132,6 +137,8 @@ export function setFilterMenuAndCacheTagsViewRoutes() {
  * @param chil dynamicRoutes（/@/router/route）第一个顶级 children 的下路由集合
  * @returns 返回有当前用户权限标识的路由数组
  */
+
+//通过所拥有的用户组分配权限
 export function setFilterRoute(chil: any) {
 	let filterRoute: any = [];
 	chil.forEach((route: any) => {
@@ -143,6 +150,7 @@ export function setFilterRoute(chil: any) {
 			});
 		}
 	});
+
 	return filterRoute;
 }
 
@@ -164,6 +172,7 @@ export function setFilterRouteEnd() {
  * @link 参考：https://next.router.vuejs.org/zh/api/#addroute
  */
 export function setAddRoute() {
+	//前端执行到这里
 	setFilterRouteEnd().forEach((route: RouteRecordRaw) => {
 		const routeName: any = route.name;
 		if (!router.hasRoute(routeName)) router.addRoute(route);
@@ -185,6 +194,7 @@ export function resetRoute() {
 
 // isRequestRoutes 为 true，则开启后端控制路由，路径：`/src/store/modules/themeConfig.ts`
 const { isRequestRoutes } = store.state.themeConfig.themeConfig;
+
 // 前端控制路由：初始化方法，防止刷新时路由丢失
 if (!isRequestRoutes) initFrontEndControlRoutes();
 
@@ -206,6 +216,7 @@ router.beforeEach(async (to, from, next) => {
 			next('/home');
 			NProgress.done();
 		} else {
+			//这里拿到的动态路由
 			if (store.state.routesList.routesList.length === 0) {
 				if (isRequestRoutes) {
 					// 后端控制路由：路由数据初始化，防止刷新时丢失

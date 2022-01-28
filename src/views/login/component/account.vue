@@ -63,23 +63,23 @@
 </template>
 
 <script lang="ts">
-import { toRefs, reactive, defineComponent, computed, getCurrentInstance } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
-import { useI18n } from 'vue-i18n';
-import { initFrontEndControlRoutes } from '/@/router/frontEnd';
-import { initBackEndControlRoutes } from '/@/router/backEnd';
-import { useStore } from '/@/store/index';
-import { Session } from '/@/utils/storage';
-import { formatAxis } from '/@/utils/formatTime';
+import { toRefs, reactive, defineComponent, computed, getCurrentInstance } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { useI18n } from 'vue-i18n'
+import { initFrontEndControlRoutes } from '/@/router/frontEnd'
+import { initBackEndControlRoutes } from '/@/router/backEnd'
+import { useStore } from '/@/store/index'
+import { Session } from '/@/utils/storage'
+import { formatAxis } from '/@/utils/formatTime'
 export default defineComponent({
 	name: 'loginAccount',
 	setup() {
-		const { t } = useI18n();
-		const { proxy } = getCurrentInstance() as any;
-		const store = useStore();
-		const route = useRoute();
-		const router = useRouter();
+		const { t } = useI18n()
+		const { proxy } = getCurrentInstance() as any
+		const store = useStore()
+		const route = useRoute()
+		const router = useRouter()
 		const state = reactive({
 			isShowPassword: false,
 			ruleForm: {
@@ -90,32 +90,32 @@ export default defineComponent({
 			loading: {
 				signIn: false,
 			},
-		});
+		})
 		// 时间获取
 		const currentTime = computed(() => {
-			return formatAxis(new Date());
-		});
+			return formatAxis(new Date())
+		})
 		// 登录
 		const onSignIn = async () => {
 			// 模拟数据
-			state.loading.signIn = true;
-			let defaultRoles: Array<string> = [];
-			let defaultAuthBtnList: Array<string> = [];
+			state.loading.signIn = true
+			let defaultRoles: Array<string> = []
+			let defaultAuthBtnList: Array<string> = []
 			// admin 页面权限标识，对应路由 meta.roles，用于控制路由的显示/隐藏
-			let adminRoles: Array<string> = ['admin'];
+			let adminRoles: Array<string> = ['admin']
 			// admin 按钮权限标识
-			let adminAuthBtnList: Array<string> = ['btn.add', 'btn.del', 'btn.edit', 'btn.link'];
+			let adminAuthBtnList: Array<string> = ['btn.add', 'btn.del', 'btn.edit', 'btn.link']
 			// test 页面权限标识，对应路由 meta.roles，用于控制路由的显示/隐藏
-			let testRoles: Array<string> = ['common'];
+			let testRoles: Array<string> = ['common']
 			// test 按钮权限标识
-			let testAuthBtnList: Array<string> = ['btn.add', 'btn.link'];
+			let testAuthBtnList: Array<string> = ['btn.add', 'btn.link']
 			// 不同用户模拟不同的用户权限
 			if (state.ruleForm.userName === 'admin') {
-				defaultRoles = adminRoles;
-				defaultAuthBtnList = adminAuthBtnList;
+				defaultRoles = adminRoles
+				defaultAuthBtnList = adminAuthBtnList
 			} else {
-				defaultRoles = testRoles;
-				defaultAuthBtnList = testAuthBtnList;
+				defaultRoles = testRoles
+				defaultAuthBtnList = testAuthBtnList
 			}
 			// 用户信息模拟数据
 			const userInfos = {
@@ -127,57 +127,57 @@ export default defineComponent({
 				time: new Date().getTime(),
 				roles: defaultRoles,
 				authBtnList: defaultAuthBtnList,
-			};
+			}
 			// 存储 token 到浏览器缓存
-			Session.set('token', Math.random().toString(36).substr(0));
+			Session.set('token', Math.random().toString(36).substr(0))
 			// 存储用户信息到浏览器缓存
-			Session.set('userInfo', userInfos);
+			Session.set('userInfo', userInfos)
 			// 1、请注意执行顺序(存储用户信息到vuex)
-			store.dispatch('userInfos/setUserInfos', userInfos);
+			store.dispatch('userInfos/setUserInfos', userInfos)
 			if (!store.state.themeConfig.themeConfig.isRequestRoutes) {
 				// 前端控制路由，2、请注意执行顺序
-				await initFrontEndControlRoutes();
-				signInSuccess();
+				await initFrontEndControlRoutes()
+				signInSuccess()
 			} else {
 				// 模拟后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
 				// 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
-				await initBackEndControlRoutes();
+				await initBackEndControlRoutes()
 				// 执行完 initBackEndControlRoutes，再执行 signInSuccess
-				signInSuccess();
+				signInSuccess()
 			}
-		};
+		}
 		// 登录成功后的跳转
 		const signInSuccess = () => {
 			// 初始化登录成功时间问候语
-			let currentTimeInfo = currentTime.value;
+			let currentTimeInfo = currentTime.value
 			// 登录成功，跳到转首页
 			// 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
 			// 如果是复制粘贴的路径，非首页/登录页，那么登录成功后重定向到对应的路径中
 			if (route.query?.redirect) {
 				router.push({
-					path: route.query?.redirect,
+					path: route.query?.redirect + '',
 					query: Object.keys(route.query?.params).length > 0 ? JSON.parse(route.query?.params) : '',
-				});
+				})
 			} else {
-				router.push('/');
+				router.push('/')
 			}
 			// 登录成功提示
 			setTimeout(() => {
 				// 关闭 loading
-				state.loading.signIn = true;
-				const signInText = t('message.signInText');
-				ElMessage.success(`${currentTimeInfo}，${signInText}`);
+				state.loading.signIn = true
+				const signInText = t('message.signInText')
+				ElMessage.success(`${currentTimeInfo}，${signInText}`)
 				// 修复防止退出登录再进入界面时，需要刷新样式才生效的问题，初始化布局样式等(登录的时候触发，目前方案)
-				proxy.mittBus.emit('onSignInClick');
-			}, 300);
-		};
+				proxy.mittBus.emit('onSignInClick')
+			}, 300)
+		}
 		return {
 			currentTime,
 			onSignIn,
 			...toRefs(state),
-		};
+		}
 	},
-});
+})
 </script>
 
 <style scoped lang="scss">
