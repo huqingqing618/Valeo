@@ -4,7 +4,7 @@
 			<el-col :sm="6" class="mb15">
 				<div class="home-card-item home-card-first">
 					<div class="flex-margin flex">
-						<img :src="getUserInfos.photo" />
+						<img :src="getUserInfos.avatar" />
 						<div class="home-card-first-right ml15">
 							<div class="flex-margin">
 								<div class="home-card-first-right-title">
@@ -96,17 +96,17 @@
 </template>
 
 <script lang="ts">
-import { toRefs, reactive, onMounted, nextTick, computed, getCurrentInstance, watch, onActivated } from 'vue';
-import * as echarts from 'echarts';
-import { CountUp } from 'countup.js';
-import { formatAxis } from '/@/utils/formatTime';
-import { useStore } from '/@/store/index';
-import { topCardItemList, environmentList, activitiesList } from './mock';
+import { toRefs, reactive, onMounted, nextTick, computed, getCurrentInstance, watch, onActivated } from 'vue'
+import * as echarts from 'echarts'
+import { CountUp } from 'countup.js'
+import { formatAxis } from '/@/utils/formatTime'
+import { useStore } from '/@/store/index'
+import { topCardItemList, environmentList, activitiesList } from './mock'
 export default {
 	name: 'home',
 	setup() {
-		const { proxy } = getCurrentInstance() as any;
-		const store = useStore();
+		const { proxy } = getCurrentInstance() as any
+		const store = useStore()
 		const state = reactive({
 			topCardItemList,
 			environmentList,
@@ -131,29 +131,31 @@ export default {
 				],
 			},
 			myCharts: [],
-		});
+		})
 		// 获取用户信息 vuex
 		const getUserInfos = computed(() => {
-			return store.state.userInfos.userInfos;
-		});
+			// console.log(store.state.userInfos)
+			const obj = {}
+			return obj
+		})
 		// 当前时间提示语
 		const currentTime = computed(() => {
-			return formatAxis(new Date());
-		});
+			return formatAxis(new Date())
+		})
 		// 初始化数字滚动
 		const initNumCountUp = () => {
 			nextTick(() => {
-				new CountUp('titleNum1', Math.random() * 10000).start();
-				new CountUp('titleNum2', Math.random() * 10000).start();
-				new CountUp('titleNum3', Math.random() * 10000).start();
-				new CountUp('tipNum1', Math.random() * 1000).start();
-				new CountUp('tipNum2', Math.random() * 1000).start();
-				new CountUp('tipNum3', Math.random() * 1000).start();
-			});
-		};
+				new CountUp('titleNum1', Math.random() * 10000).start()
+				new CountUp('titleNum2', Math.random() * 10000).start()
+				new CountUp('titleNum3', Math.random() * 10000).start()
+				new CountUp('tipNum1', Math.random() * 1000).start()
+				new CountUp('tipNum2', Math.random() * 1000).start()
+				new CountUp('tipNum3', Math.random() * 1000).start()
+			})
+		}
 		// 商品销售情
 		const initHomeLaboratory = () => {
-			const myChart = echarts.init(proxy.$refs.homeLaboratoryRef);
+			const myChart = echarts.init(proxy.$refs.homeLaboratoryRef)
 			const option = {
 				grid: {
 					top: 50,
@@ -233,13 +235,13 @@ export default {
 						},
 					},
 				],
-			};
-			myChart.setOption(option);
-			state.myCharts.push(myChart);
-		};
+			}
+			myChart.setOption(option)
+			state.myCharts.push(myChart)
+		}
 		// 履约超时预警
 		const initHomeOvertime = () => {
-			const myChart = echarts.init(proxy.$refs.homeOvertimeRef);
+			const myChart = echarts.init(proxy.$refs.homeOvertimeRef)
 			const option = {
 				grid: {
 					top: 50,
@@ -285,47 +287,47 @@ export default {
 						data: [10, 10, 13, 12, 15, 18, 19, 10, 12, 15, 11, 17],
 					},
 				],
-			};
-			myChart.setOption(option);
-			state.myCharts.push(myChart);
-		};
+			}
+			myChart.setOption(option)
+			state.myCharts.push(myChart)
+		}
 		// 批量设置 echarts resize
 		const initEchartsResizeFun = () => {
 			nextTick(() => {
 				for (let i = 0; i < state.myCharts.length; i++) {
-					state.myCharts[i].resize();
+					state.myCharts[i].resize()
 				}
-			});
-		};
+			})
+		}
 		// 批量设置 echarts resize
 		const initEchartsResize = () => {
-			window.addEventListener('resize', initEchartsResizeFun);
-		};
+			window.addEventListener('resize', initEchartsResizeFun)
+		}
 		// 页面加载时
 		onMounted(() => {
-			initNumCountUp();
-			initHomeLaboratory();
-			initHomeOvertime();
-			initEchartsResize();
-		});
+			initNumCountUp()
+			initHomeLaboratory()
+			initHomeOvertime()
+			initEchartsResize()
+		})
 		// 由于页面缓存原因，keep-alive
 		onActivated(() => {
-			initEchartsResizeFun();
-		});
+			initEchartsResizeFun()
+		})
 		// 监听 vuex 中的 tagsview 开启全屏变化，重新 resize 图表，防止不出现/大小不变等
 		watch(
 			() => store.state.tagsViewRoutes.isTagsViewCurrenFull,
 			() => {
-				initEchartsResizeFun();
+				initEchartsResizeFun()
 			}
-		);
+		)
 		return {
 			getUserInfos,
 			currentTime,
 			...toRefs(state),
-		};
+		}
 	},
-};
+}
 </script>
 
 <style scoped lang="scss">

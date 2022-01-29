@@ -1,18 +1,18 @@
-import vue from '@vitejs/plugin-vue';
-import { resolve } from 'path';
-import type { UserConfig } from 'vite';
-import { loadEnv } from './src/utils/viteBuild';
+import vue from '@vitejs/plugin-vue'
+import { resolve } from 'path'
+import type { UserConfig } from 'vite'
+import { loadEnv } from './src/utils/viteBuild'
 
 const pathResolve = (dir: string): any => {
-	return resolve(__dirname, '.', dir);
-};
+	return resolve(__dirname, '.', dir)
+}
 
-const { VITE_PORT, VITE_OPEN, VITE_PUBLIC_PATH } = loadEnv();
+const { VITE_PORT, VITE_OPEN, VITE_PUBLIC_PATH } = loadEnv()
 
 const alias: Record<string, string> = {
 	'/@': pathResolve('./src/'),
 	'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js',
-};
+}
 
 const viteConfig: UserConfig = {
 	plugins: [vue()],
@@ -30,7 +30,7 @@ const viteConfig: UserConfig = {
 			'/api': {
 				target: 'http://localhost:9031',
 				ws: true,
-				key: true,
+				// key: true,
 				// rewrite: (path) => path.replace(/^\/gitee/, ''),
 			},
 		},
@@ -56,7 +56,7 @@ const viteConfig: UserConfig = {
 					AtRule: {
 						charset: (atRule) => {
 							if (atRule.name === 'charset') {
-								atRule.remove();
+								atRule.remove()
 							}
 						},
 					},
@@ -69,6 +69,6 @@ const viteConfig: UserConfig = {
 		__VUE_I18N_FULL_INSTALL__: JSON.stringify(false),
 		__INTLIFY_PROD_DEVTOOLS__: JSON.stringify(false),
 	},
-};
+}
 
-export default viteConfig;
+export default viteConfig

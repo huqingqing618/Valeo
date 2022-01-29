@@ -1,6 +1,6 @@
-import { Module } from 'vuex';
+import { Module } from 'vuex'
 // 此处加上 `.ts` 后缀报错，具体原因不详
-import { ThemeConfigState, RootStateTypes } from '/@/store/interface/index';
+import { ThemeConfigState, RootStateTypes } from '/@/store/interface/index'
 
 /**
  * 2020.05.28 by lyt 优化
@@ -132,7 +132,7 @@ const themeConfigModule: Module<ThemeConfigState, RootStateTypes> = {
 			 * 后端控制路由
 			 */
 			// 是否开启后端控制路由
-			isRequestRoutes: false,
+			isRequestRoutes: true,
 
 			/**
 			 * 全局网站标题 / 副标题
@@ -150,15 +150,15 @@ const themeConfigModule: Module<ThemeConfigState, RootStateTypes> = {
 	mutations: {
 		// 设置布局配置
 		getThemeConfig(state: any, data: object) {
-			state.themeConfig = data;
+			state.themeConfig = data
 		},
 	},
 	actions: {
 		// 设置布局配置
 		setThemeConfig({ commit }, data: object) {
-			commit('getThemeConfig', data);
+			commit('getThemeConfig', data)
 		},
 	},
-};
+}
 
-export default themeConfigModule;
+export default themeConfigModule

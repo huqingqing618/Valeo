@@ -1,7 +1,7 @@
 <template>
 	<el-form class="login-content-form">
 		<el-form-item class="login-animation-one">
-			<el-input type="text" :placeholder="$t('message.account.accountPlaceholder1')" v-model="ruleForm.userName" clearable autocomplete="off">
+			<el-input type="text" :placeholder="$t('message.account.accountPlaceholder1')" v-model="ruleForm.username" clearable autocomplete="off">
 				<template #prefix>
 					<el-icon class="el-input__icon"><elementUser /></el-icon>
 				</template>
@@ -34,7 +34,7 @@
 						type="text"
 						maxlength="4"
 						:placeholder="$t('message.account.accountPlaceholder3')"
-						v-model="ruleForm.code"
+						v-model="ruleForm.captcha"
 						clearable
 						autocomplete="off"
 					>
@@ -83,9 +83,11 @@ export default defineComponent({
 		const state = reactive({
 			isShowPassword: false,
 			ruleForm: {
-				userName: 'admin',
+				username: 'admin',
 				password: '123456',
-				code: '1234',
+				captcha: '520',
+				key: '520',
+				remember: true,
 			},
 			loading: {
 				signIn: false,
@@ -97,54 +99,60 @@ export default defineComponent({
 		})
 		// 登录
 		const onSignIn = async () => {
-			// 模拟数据
 			state.loading.signIn = true
-			let defaultRoles: Array<string> = []
-			let defaultAuthBtnList: Array<string> = []
-			// admin 页面权限标识，对应路由 meta.roles，用于控制路由的显示/隐藏
-			let adminRoles: Array<string> = ['admin']
-			// admin 按钮权限标识
-			let adminAuthBtnList: Array<string> = ['btn.add', 'btn.del', 'btn.edit', 'btn.link']
-			// test 页面权限标识，对应路由 meta.roles，用于控制路由的显示/隐藏
-			let testRoles: Array<string> = ['common']
-			// test 按钮权限标识
-			let testAuthBtnList: Array<string> = ['btn.add', 'btn.link']
-			// 不同用户模拟不同的用户权限
-			if (state.ruleForm.userName === 'admin') {
-				defaultRoles = adminRoles
-				defaultAuthBtnList = adminAuthBtnList
-			} else {
-				defaultRoles = testRoles
-				defaultAuthBtnList = testAuthBtnList
-			}
-			// 用户信息模拟数据
-			const userInfos = {
-				userName: state.ruleForm.userName,
-				photo:
-					state.ruleForm.userName === 'admin'
-						? 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1813762643,1914315241&fm=26&gp=0.jpg'
-						: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=317673774,2961727727&fm=26&gp=0.jpg',
-				time: new Date().getTime(),
-				roles: defaultRoles,
-				authBtnList: defaultAuthBtnList,
-			}
-			// 存储 token 到浏览器缓存
-			Session.set('token', Math.random().toString(36).substr(0))
-			// 存储用户信息到浏览器缓存
-			Session.set('userInfo', userInfos)
-			// 1、请注意执行顺序(存储用户信息到vuex)
-			store.dispatch('userInfos/setUserInfos', userInfos)
+			await store.dispatch('userInfo/userLogin', state.ruleForm)
 			if (!store.state.themeConfig.themeConfig.isRequestRoutes) {
-				// 前端控制路由，2、请注意执行顺序
-				await initFrontEndControlRoutes()
-				signInSuccess()
-			} else {
-				// 模拟后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
-				// 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
 				await initBackEndControlRoutes()
-				// 执行完 initBackEndControlRoutes，再执行 signInSuccess
-				signInSuccess()
 			}
+			//使用vuex去存储用户信息
+			// 模拟数据
+			// state.loading.signIn = true
+			// let defaultRoles: Array<string> = []
+			// let defaultAuthBtnList: Array<string> = []
+			// // admin 页面权限标识，对应路由 meta.roles，用于控制路由的显示/隐藏
+			// let adminRoles: Array<string> = ['admin']
+			// // admin 按钮权限标识
+			// let adminAuthBtnList: Array<string> = ['btn.add', 'btn.del', 'btn.edit', 'btn.link']
+			// // test 页面权限标识，对应路由 meta.roles，用于控制路由的显示/隐藏
+			// let testRoles: Array<string> = ['common']
+			// // test 按钮权限标识
+			// let testAuthBtnList: Array<string> = ['btn.add', 'btn.link']
+			// // 不同用户模拟不同的用户权限
+			// if (state.ruleForm.userName === 'admin') {
+			// 	defaultRoles = adminRoles
+			// 	defaultAuthBtnList = adminAuthBtnList
+			// } else {
+			// 	defaultRoles = testRoles
+			// 	defaultAuthBtnList = testAuthBtnList
+			// }
+			// // 用户信息模拟数据
+			// const userInfos = {
+			// 	userName: state.ruleForm.userName,
+			// 	photo:
+			// 		state.ruleForm.userName === 'admin'
+			// 			? 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1813762643,1914315241&fm=26&gp=0.jpg'
+			// 			: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=317673774,2961727727&fm=26&gp=0.jpg',
+			// 	time: new Date().getTime(),
+			// 	roles: defaultRoles,
+			// 	authBtnList: defaultAuthBtnList,
+			// }
+			// // 存储 token 到浏览器缓存
+			// Session.set('token', Math.random().toString(36).substr(0))
+			// // 存储用户信息到浏览器缓存
+			// Session.set('userInfo', userInfos)
+			// // 1、请注意执行顺序(存储用户信息到vuex)
+			// store.dispatch('userInfos/setUserInfos', userInfos)
+			// if (!store.state.themeConfig.themeConfig.isRequestRoutes) {
+			// 	// 前端控制路由，2、请注意执行顺序
+			// 	await initFrontEndControlRoutes()
+			// 	signInSuccess()
+			// } else {
+			// 	// 模拟后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
+			// 	// 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
+			// 	await initBackEndControlRoutes()
+			// 	// 执行完 initBackEndControlRoutes，再执行 signInSuccess
+			signInSuccess()
+			// }
 		}
 		// 登录成功后的跳转
 		const signInSuccess = () => {

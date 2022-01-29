@@ -1,24 +1,25 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
-import NProgress from 'nprogress';
-import 'nprogress/nprogress.css';
-import { store } from '/@/store/index.ts';
-import { Session } from '/@/utils/storage';
-import { NextLoading } from '/@/utils/loading';
-import { staticRoutes, dynamicRoutes } from '/@/router/route';
-import { initFrontEndControlRoutes } from '/@/router/frontEnd';
-import { initBackEndControlRoutes } from '/@/router/backEnd';
+import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+import { store } from '/@/store/index.ts'
+import { Session } from '/@/utils/storage'
+import { NextLoading } from '/@/utils/loading'
+import { staticRoutes, dynamicRoutes } from '/@/router/route'
+import { initFrontEndControlRoutes } from '/@/router/frontEnd'
+import { initBackEndControlRoutes } from '/@/router/backEnd'
 
 /**
  * 创建一个可以被 Vue 应用程序使用的路由实例
  * @method createRouter(options: RouterOptions): Router
  * @link 参考：https://next.router.vuejs.org/zh/api/#createrouter
  */
-let oldMenuList: any = formatTwoStageRoutes(formatFlatteningRoutes(dynamicRoutes));
+let oldMenuList: any = formatTwoStageRoutes(formatFlatteningRoutes(dynamicRoutes))
 
 const router = createRouter({
 	history: createWebHashHistory(),
 	routes: [...staticRoutes, ...oldMenuList],
-});
+})
+console.log(router)
 
 /**
  * 定义404界面
@@ -27,7 +28,7 @@ const router = createRouter({
 const pathMatch = {
 	path: '/:path(.*)*',
 	redirect: '/404',
-};
+}
 
 /**
  * 路由多级嵌套数组处理成一维数组
@@ -35,14 +36,14 @@ const pathMatch = {
  * @returns 返回处理后的一维路由菜单数组
  */
 export function formatFlatteningRoutes(arr: any) {
-	if (arr.length <= 0) return false;
+	if (arr.length <= 0) return false
 	for (let i = 0; i < arr.length; i++) {
 		if (arr[i].children) {
-			arr = arr.slice(0, i + 1).concat(arr[i].children, arr.slice(i + 1));
+			arr = arr.slice(0, i + 1).concat(arr[i].children, arr.slice(i + 1))
 		}
 	}
 
-	return arr;
+	return arr
 }
 
 /**
@@ -53,31 +54,31 @@ export function formatFlatteningRoutes(arr: any) {
  * @returns 返回将一维数组重新处理成 `定义动态路由（dynamicRoutes）` 的格式
  */
 export function formatTwoStageRoutes(arr: any) {
-	if (arr.length <= 0) return false;
-	const newArr: any = [];
-	const cacheList: Array<string> = [];
+	if (arr.length <= 0) return false
+	const newArr: any = []
+	const cacheList: Array<string> = []
 	arr.forEach((v: any) => {
 		if (v.path === '/') {
-			newArr.push({ component: v.component, name: v.name, path: v.path, redirect: v.redirect, meta: v.meta, children: [] });
+			newArr.push({ component: v.component, name: v.name, path: v.path, redirect: v.redirect, meta: v.meta, children: [] })
 		} else {
 			// 判断是否是动态路由（xx/:id/:name），用于 tagsView 等中使用
 			// 修复：https://gitee.com/lyt-top/vue-next-admin/issues/I3YX6G
 			if (v.path.indexOf('/:') > -1) {
 				//这判断的是动态路由传参
-				v.meta['isDynamic'] = true;
-				v.meta['isDynamicPath'] = v.path;
+				v.meta['isDynamic'] = true
+				v.meta['isDynamicPath'] = v.path
 			}
-			newArr[0].children.push({ ...v });
+			newArr[0].children.push({ ...v })
 			// 存 name 值，keep-alive 中 include 使用，实现路由的缓存
 			// 路径：/@/layout/routerView/parent.vue
 			if (newArr[0].meta.isKeepAlive && v.meta.isKeepAlive) {
-				cacheList.push(v.name);
-				store.dispatch('keepAliveNames/setCacheKeepAlive', cacheList);
+				cacheList.push(v.name)
+				store.dispatch('keepAliveNames/setCacheKeepAlive', cacheList)
 			}
 		}
-	});
+	})
 
-	return newArr;
+	return newArr
 }
 
 /**
@@ -86,9 +87,9 @@ export function formatTwoStageRoutes(arr: any) {
  */
 export function setCacheTagsViewRoutes() {
 	// 获取有权限的路由，否则 tagsView、菜单搜索中无权限的路由也将显示
-	let rolesRoutes = setFilterHasRolesMenu(dynamicRoutes, store.state.userInfos.userInfos.roles);
-	// 添加到 vuex setTagsViewRoutes 中
-	store.dispatch('tagsViewRoutes/setTagsViewRoutes', formatTwoStageRoutes(formatFlatteningRoutes(rolesRoutes))[0].children);
+	// let rolesRoutes = setFilterHasRolesMenu(dynamicRoutes, store.state.userInfos.userInfos.roles)
+	// // 添加到 vuex setTagsViewRoutes 中
+	// store.dispatch('tagsViewRoutes/setTagsViewRoutes', formatTwoStageRoutes(formatFlatteningRoutes(rolesRoutes))[0].children)
 }
 
 /**
@@ -98,8 +99,8 @@ export function setCacheTagsViewRoutes() {
  * @returns 返回对比后有权限的路由项
  */
 export function hasRoles(roles: any, route: any) {
-	if (route.meta && route.meta.roles) return true;
-	else return true;
+	if (route.meta && route.meta.roles) return true
+	else return true
 }
 
 /**
@@ -109,15 +110,16 @@ export function hasRoles(roles: any, route: any) {
  * @returns 返回有权限的路由数组 `meta.roles` 中控制
  */
 export function setFilterHasRolesMenu(routes: any, roles: any) {
-	const menu: any = [];
-	routes.forEach((route: any) => {
-		const item = { ...route };
-		if (hasRoles(roles, item)) {
-			if (item.children) item.children = setFilterHasRolesMenu(item.children, roles);
-			menu.push(item);
-		}
-	});
-	return menu;
+	// const menu: any = []
+	// routes.forEach((route: any) => {
+	// 	const item = { ...route }
+	// 	if (hasRoles(roles, item)) {
+	// 		if (item.children) item.children = setFilterHasRolesMenu(item.children, roles)
+	// 		menu.push(item)
+	// 	}
+	// })
+	// return menu
+	return routes
 }
 
 /**
@@ -126,8 +128,8 @@ export function setFilterHasRolesMenu(routes: any, roles: any) {
  * @description 用于 tagsView、菜单搜索中：未过滤隐藏的(isHide)
  */
 export function setFilterMenuAndCacheTagsViewRoutes() {
-	store.dispatch('routesList/setRoutesList', setFilterHasRolesMenu(dynamicRoutes[0].children, store.state.userInfos.userInfos.roles));
-	setCacheTagsViewRoutes();
+	store.dispatch('routesList/setRoutesList', setFilterHasRolesMenu(dynamicRoutes[0].children, null))
+	setCacheTagsViewRoutes()
 }
 
 /**
@@ -140,18 +142,18 @@ export function setFilterMenuAndCacheTagsViewRoutes() {
 
 //通过所拥有的用户组分配权限
 export function setFilterRoute(chil: any) {
-	let filterRoute: any = [];
-	chil.forEach((route: any) => {
-		if (route.meta.roles) {
-			route.meta.roles.forEach((metaRoles: any) => {
-				store.state.userInfos.userInfos.roles.forEach((roles: any) => {
-					if (metaRoles === roles) filterRoute.push({ ...route });
-				});
-			});
-		}
-	});
+	// let filterRoute: any = []
+	// chil.forEach((route: any) => {
+	// 	if (route.meta.roles) {
+	// 		route.meta.roles.forEach((metaRoles: any) => {
+	// 			store.state.userInfos.userInfos.roles.forEach((roles: any) => {
+	// 				if (metaRoles === roles) filterRoute.push({ ...route })
+	// 			})
+	// 		})
+	// 	}
+	// })
 
-	return filterRoute;
+	return chil
 }
 
 /**
@@ -160,9 +162,10 @@ export function setFilterRoute(chil: any) {
  * @returns 返回替换后的路由数组
  */
 export function setFilterRouteEnd() {
-	let filterRouteEnd: any = formatTwoStageRoutes(formatFlatteningRoutes(dynamicRoutes));
-	filterRouteEnd[0].children = [...setFilterRoute(filterRouteEnd[0].children), { ...pathMatch }];
-	return filterRouteEnd;
+	let filterRouteEnd: any = formatTwoStageRoutes(formatFlatteningRoutes([...dynamicRoutes]))
+
+	filterRouteEnd[0].children = [...setFilterRoute(filterRouteEnd[0].children), { ...pathMatch }]
+	return filterRouteEnd
 }
 
 /**
@@ -174,9 +177,9 @@ export function setFilterRouteEnd() {
 export function setAddRoute() {
 	//前端执行到这里
 	setFilterRouteEnd().forEach((route: RouteRecordRaw) => {
-		const routeName: any = route.name;
-		if (!router.hasRoute(routeName)) router.addRoute(route);
-	});
+		const routeName: any = route.name
+		if (!router.hasRoute(routeName)) router.addRoute(route)
+	})
 }
 
 /**
@@ -187,56 +190,58 @@ export function setAddRoute() {
  */
 export function resetRoute() {
 	setFilterRouteEnd().forEach((route: RouteRecordRaw) => {
-		const routeName: any = route.name;
-		router.hasRoute(routeName) && router.removeRoute(routeName);
-	});
+		const routeName: any = route.name
+		router.hasRoute(routeName) && router.removeRoute(routeName)
+	})
 }
 
 // isRequestRoutes 为 true，则开启后端控制路由，路径：`/src/store/modules/themeConfig.ts`
-const { isRequestRoutes } = store.state.themeConfig.themeConfig;
+const { isRequestRoutes } = store.state.themeConfig.themeConfig
 
 // 前端控制路由：初始化方法，防止刷新时路由丢失
-if (!isRequestRoutes) initFrontEndControlRoutes();
+if (!isRequestRoutes) initFrontEndControlRoutes()
 
 // 路由加载前
 router.beforeEach(async (to, from, next) => {
-	NProgress.configure({ showSpinner: false });
-	if (to.meta.title) NProgress.start();
-	const token = Session.get('token');
+	NProgress.configure({ showSpinner: false })
+	if (to.meta.title) NProgress.start()
+	const token = Session.get('token')
 	if (to.path === '/login' && !token) {
-		next();
-		NProgress.done();
+		next()
+		NProgress.done()
 	} else {
 		if (!token) {
-			next(`/login?redirect=${to.path}&params=${JSON.stringify(to.query ? to.query : to.params)}`);
-			Session.clear();
-			resetRoute();
-			NProgress.done();
+			next(`/login?redirect=${to.path}&params=${JSON.stringify(to.query ? to.query : to.params)}`)
+			Session.clear()
+			resetRoute()
+			NProgress.done()
 		} else if (token && to.path === '/login') {
-			next('/home');
-			NProgress.done();
+			next('/home')
+			NProgress.done()
 		} else {
+			console.log(store.state.routesList.routesList)
+
 			//这里拿到的动态路由
 			if (store.state.routesList.routesList.length === 0) {
 				if (isRequestRoutes) {
-					// 后端控制路由：路由数据初始化，防止刷新时丢失
-					await initBackEndControlRoutes();
+					// 		// 后端控制路由：路由数据初始化，防止刷新时丢失
+					await initBackEndControlRoutes()
 					// 动态添加路由：防止非首页刷新时跳转回首页的问题
 					// 确保 addRoute() 时动态添加的路由已经被完全加载上去
-					next({ ...to, replace: true });
+					next({ ...to, replace: true })
 				}
 			} else {
-				next();
+				next()
 			}
 		}
 	}
-});
+})
 
 // 路由加载后
 router.afterEach(() => {
-	NProgress.done();
-	NextLoading.done();
-});
+	NProgress.done()
+	NextLoading.done()
+})
 
 // 导出路由
-export default router;
+export default router
