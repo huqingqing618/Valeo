@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from 'vue-router';
+import { RouteRecordRaw } from 'vue-router'
 
 /**
  * 路由meta对象参数说明
@@ -136,6 +136,57 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 							icon: 'elementSetUp',
 						},
 					},
+					// {
+					// 	children: [],
+					// 	createTime: '2021-09-30 10:17:45',
+					// 	createUser: 1,
+					// 	hide: 0,
+					// 	icon: 'el-icon-s-operation',
+					// 	id: 20,
+					// 	mark: 1,
+					// 	active: undefined,
+					// 	hideFooter: undefined,
+					// 	isAffix: false,
+					// 	tabUnique: undefined,
+					// 	title: 'message.router.system',
+					// 	name: 'systemmenu',
+					// 	note: '',
+					// 	open: false,
+					// 	path: '/system/level',
+					// 	permission: 'sys:menu:view',
+					// 	pid: 4,
+					// 	sort: 10,
+					// 	status: 1,
+					// 	target: '_self',
+					// 	type: 0,
+					// 	updateUser: 1,
+					// 	component: () => import('/@/views/system/dic/index.vue'),
+					// 	meta: {
+					// 		title: 'message.router.systemDic',
+					// 		isLink: '',
+					// 		isHide: false,
+					// 		isKeepAlive: true,
+					// 		isAffix: false,
+					// 		isIframe: false,
+					// 		roles: ['admin'],
+					// 		icon: 'elementSetUp',
+					// 	},
+					// },
+					// {
+					// 	path: '/system/level',
+					// 	name: 'systemLevel',
+					// 	component: () => import('/@/views/system/level/index.vue'),
+					// 	meta: {
+					// 		title: 'message.router.systemDic',
+					// 		isLink: '',
+					// 		isHide: false,
+					// 		isKeepAlive: true,
+					// 		isAffix: false,
+					// 		isIframe: false,
+					// 		roles: ['admin'],
+					// 		icon: 'elementSetUp',
+					// 	},
+					// },
 				],
 			},
 			{
@@ -1137,7 +1188,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 			},
 		],
 	},
-];
+]
 
 /**
  * 定义静态路由
@@ -1189,4 +1240,4 @@ export const staticRoutes: Array<RouteRecordRaw> = [
 			title: 'message.router.visualizingLinkDemo2',
 		},
 	},
-];
+]

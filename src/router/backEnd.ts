@@ -32,9 +32,8 @@ export async function initBackEndControlRoutes() {
 	store.dispatch('userInfo/setUserInfos')
 	// 获取路由菜单数据
 	const res = await getBackEndControlRoutes()
-	console.log(res)
-
 	const { menus } = formatMenus(res.data, null)
+
 	// menus.forEach((item: any) => {
 	// 	item.component = "import('/src/layout/index.vue')"
 	// })
@@ -98,20 +97,22 @@ export function setBackEndControlRefreshRoutes() {
 //  * @param component 当前要处理项 component
 //  * @returns 返回处理成函数后的 component
 //  */
-// export function dynamicImport(dynamicViewsModules: Record<string, Function>, component: string) {
-// 	const keys = Object.keys(dynamicViewsModules)
-// 	const matchKeys = keys.filter((key) => {
-// 		const k = key.replace(/..\/views|../, '')
-// 		return k.startsWith(`${component}`) || k.startsWith(`/${component}`)
-// 	})
-// 	if (matchKeys?.length === 1) {
-// 		const matchKey = matchKeys[0]
-// 		return dynamicViewsModules[matchKey]
-// 	}
-// 	if (matchKeys?.length > 1) {
-// 		return false
-// 	}
-// }
+export function dynamicImport(dynamicViewsModules: Record<string, Function>, component: string) {
+	const keys = Object.keys(dynamicViewsModules)
+	const matchKeys = keys.filter((key) => {
+		const k = key.replace(/..\/views|../, '')
+		return k.startsWith(`${component}`) || k.startsWith(`/${component}`)
+	})
+	console.log(matchKeys)
+
+	if (matchKeys?.length === 1) {
+		const matchKey = matchKeys[0]
+		return dynamicViewsModules[matchKey]
+	}
+	if (matchKeys?.length > 1) {
+		return false
+	}
+}
 
 //处理动态路由权限
 export function formatMenus(data: any, parseMenuItem: any) {
@@ -121,12 +122,13 @@ export function formatMenus(data: any, parseMenuItem: any) {
 			item.meta = Object.assign(
 				{
 					title: item.title,
-					icon: item.icon,
+					icon: 'iconfont icon-quanxian',
 					hide: item.hide,
 					active: item.active || item.uid,
 					hideFooter: item.hideFooter,
 					hideSidebar: item.hideSidebar,
 					tabUnique: item.tabUnique,
+					isAffix: false,
 				},
 				item.meta
 			)
@@ -134,7 +136,7 @@ export function formatMenus(data: any, parseMenuItem: any) {
 				if (!home && item.path && !isUrl(item.path)) {
 					home = {
 						path: item.path,
-						title: item.meta.title,
+						title: item.title,
 					}
 				}
 			} else if (item.children[0].path) {
@@ -150,6 +152,22 @@ export function formatMenus(data: any, parseMenuItem: any) {
 				console.error('菜单的path作为vue循环的key不能为空且要唯一: ', d)
 				return false
 			}
+			const list = item.path.split('/')
+			list.forEach((letter: any, index: number) => {
+				if (!letter) {
+				} else {
+					if (index === 1) return false
+					let str = list[index].substring(0, 1).toLocaleUpperCase()
+					list[index] = str + list[index].substring(1)
+				}
+			})
+			item.name = list.join('')
+			if (!item.component) {
+				item.component = () => import('/src/layout/routerView/parent.vue')
+			} else {
+				item.component = dynamicImport(dynamicViewsModules, item.component as string)
+			}
+
 			return item
 		})
 	return {
@@ -163,7 +181,6 @@ export function formatTreeData(data: any, formatter: any, childKey = 'children')
 	if (data && data.length) {
 		data.forEach((d: any) => {
 			let item = formatter(d)
-
 			if (item !== false) {
 				if (item[childKey]) {
 					item[childKey] = formatTreeData(item[childKey], formatter, childKey)

@@ -92,11 +92,10 @@ export default {
 		},
 	},
 	mounted: function () {
-		const dragEl = this.$refs.dragVerify;
-		dragEl.style.setProperty('--textColor', this.textColor);
-		dragEl.style.setProperty('--width', Math.floor(this.width / 2) + 'px');
-		dragEl.style.setProperty('--pwidth', -Math.floor(this.width / 2) + 'px');
-		console.log(this.$slots);
+		const dragEl = this.$refs.dragVerify
+		dragEl.style.setProperty('--textColor', this.textColor)
+		dragEl.style.setProperty('--width', Math.floor(this.width / 2) + 'px')
+		dragEl.style.setProperty('--pwidth', -Math.floor(this.width / 2) + 'px')
 	},
 	computed: {
 		handlerStyle: function () {
@@ -104,10 +103,10 @@ export default {
 				width: this.height + 'px',
 				height: this.height + 'px',
 				background: this.handlerBg,
-			};
+			}
 		},
 		message: function () {
-			return this.isPassing ? this.successText : this.text;
+			return this.isPassing ? this.successText : this.text
 		},
 		dragVerifyStyle: function () {
 			return {
@@ -116,21 +115,21 @@ export default {
 				lineHeight: this.height + 'px',
 				background: this.background,
 				borderRadius: this.circle ? this.height / 2 + 'px' : this.radius,
-			};
+			}
 		},
 		progressBarStyle: function () {
 			return {
 				background: this.progressBarBg,
 				height: this.height + 'px',
 				borderRadius: this.circle ? this.height / 2 + 'px 0 0 ' + this.height / 2 + 'px' : this.radius,
-			};
+			}
 		},
 		textStyle: function () {
 			return {
 				height: this.height + 'px',
 				width: this.width + 'px',
 				fontSize: this.textSize,
-			};
+			}
 		},
 	},
 	data() {
@@ -138,80 +137,80 @@ export default {
 			isMoving: false,
 			x: 0,
 			isOk: false,
-		};
+		}
 	},
 	methods: {
 		dragStart: function (e) {
 			if (!this.isPassing) {
-				this.isMoving = true;
-				this.x = e.pageX || e.touches[0].pageX;
+				this.isMoving = true
+				this.x = e.pageX || e.touches[0].pageX
 			}
-			this.$emit('handlerMove');
+			this.$emit('handlerMove')
 		},
 		dragMoving: function (e) {
 			if (this.isMoving && !this.isPassing) {
-				var _x = (e.pageX || e.touches[0].pageX) - this.x;
-				var handler = this.$refs.handler;
+				var _x = (e.pageX || e.touches[0].pageX) - this.x
+				var handler = this.$refs.handler
 				if (_x > 0 && _x <= this.width - this.height) {
-					handler.style.left = _x + 'px';
-					this.$refs.progressBar.style.width = _x + this.height / 2 + 'px';
+					handler.style.left = _x + 'px'
+					this.$refs.progressBar.style.width = _x + this.height / 2 + 'px'
 				} else if (_x > this.width - this.height) {
-					handler.style.left = this.width - this.height + 'px';
-					this.$refs.progressBar.style.width = this.width - this.height / 2 + 'px';
-					this.passVerify();
+					handler.style.left = this.width - this.height + 'px'
+					this.$refs.progressBar.style.width = this.width - this.height / 2 + 'px'
+					this.passVerify()
 				}
 			}
 		},
 		dragFinish: function (e) {
 			if (this.isMoving && !this.isPassing) {
-				var _x = (e.pageX || e.changedTouches[0].pageX) - this.x;
+				var _x = (e.pageX || e.changedTouches[0].pageX) - this.x
 				if (_x < this.width - this.height) {
-					this.isOk = true;
-					var that = this;
+					this.isOk = true
+					var that = this
 					setTimeout(function () {
-						that.$refs.handler.style.left = '0';
-						that.$refs.progressBar.style.width = '0';
-						that.isOk = false;
-					}, 500);
-					this.$emit('passfail');
+						that.$refs.handler.style.left = '0'
+						that.$refs.progressBar.style.width = '0'
+						that.isOk = false
+					}, 500)
+					this.$emit('passfail')
 				} else {
-					var handler = this.$refs.handler;
-					handler.style.left = this.width - this.height + 'px';
-					this.$refs.progressBar.style.width = this.width - this.height / 2 + 'px';
-					this.passVerify();
+					var handler = this.$refs.handler
+					handler.style.left = this.width - this.height + 'px'
+					this.$refs.progressBar.style.width = this.width - this.height / 2 + 'px'
+					this.passVerify()
 				}
-				this.isMoving = false;
+				this.isMoving = false
 			}
 		},
 		passVerify: function () {
-			this.$emit('update:isPassing', true);
-			this.isMoving = false;
-			var handler = this.$refs.handler;
-			handler.children[0].className = this.successIcon;
-			this.$refs.progressBar.style.background = this.completedBg;
-			this.$refs.message.style['-webkit-text-fill-color'] = 'unset';
-			this.$refs.message.style.animation = 'slidetounlock2 3s infinite';
-			this.$refs.message.style.color = '#fff';
-			this.$emit('passcallback');
+			this.$emit('update:isPassing', true)
+			this.isMoving = false
+			var handler = this.$refs.handler
+			handler.children[0].className = this.successIcon
+			this.$refs.progressBar.style.background = this.completedBg
+			this.$refs.message.style['-webkit-text-fill-color'] = 'unset'
+			this.$refs.message.style.animation = 'slidetounlock2 3s infinite'
+			this.$refs.message.style.color = '#fff'
+			this.$emit('passcallback')
 		},
 		reset: function () {
-			const oriData = this.$options.data();
+			const oriData = this.$options.data()
 			for (const key in oriData) {
 				if (Object.prototype.hasOwnProperty.call(oriData, key)) {
-					this[key] = oriData[key];
+					this[key] = oriData[key]
 				}
 			}
-			var handler = this.$refs.handler;
-			var message = this.$refs.message;
-			handler.style.left = '0';
-			this.$refs.progressBar.style.width = '0';
-			handler.children[0].className = this.handlerIcon;
-			message.style['-webkit-text-fill-color'] = 'transparent';
-			message.style.animation = 'slidetounlock 3s infinite';
-			message.style.color = this.background;
+			var handler = this.$refs.handler
+			var message = this.$refs.message
+			handler.style.left = '0'
+			this.$refs.progressBar.style.width = '0'
+			handler.children[0].className = this.handlerIcon
+			message.style['-webkit-text-fill-color'] = 'transparent'
+			message.style.animation = 'slidetounlock 3s infinite'
+			message.style.color = this.background
 		},
 	},
-};
+}
 </script>
 <style scoped>
 .drag_verify {

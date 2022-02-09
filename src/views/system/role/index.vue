@@ -56,16 +56,16 @@
 </template>
 
 <script lang="ts">
-import { toRefs, reactive, onMounted, ref } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import AddRole from '/@/views/system/role/component/addRole.vue';
-import EditRole from '/@/views/system/role/component/editRole.vue';
+import { toRefs, reactive, onMounted, ref } from 'vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import AddRole from '/@/views/system/role/component/addRole.vue'
+import EditRole from '/@/views/system/role/component/editRole.vue'
 export default {
 	name: 'systemRole',
 	components: { AddRole, EditRole },
 	setup() {
-		const addRoleRef = ref();
-		const editRoleRef = ref();
+		const addRoleRef = ref()
+		const editRoleRef = ref()
 		const state: any = reactive({
 			tableData: {
 				data: [],
@@ -76,10 +76,10 @@ export default {
 					pageSize: 10,
 				},
 			},
-		});
+		})
 		// 初始化表格数据
 		const initTableData = () => {
-			const data: Array<object> = [];
+			const data: Array<object> = []
 			for (let i = 0; i < 2; i++) {
 				data.push({
 					roleName: i === 0 ? '超级管理员' : '普通用户',
@@ -88,19 +88,19 @@ export default {
 					sort: i,
 					status: true,
 					createTime: new Date().toLocaleString(),
-				});
+				})
 			}
-			state.tableData.data = data;
-			state.tableData.total = state.tableData.data.length;
-		};
+			state.tableData.data = data
+			state.tableData.total = state.tableData.data.length
+		}
 		// 打开新增角色弹窗
 		const onOpenAddRole = () => {
-			addRoleRef.value.openDialog();
-		};
+			addRoleRef.value.openDialog()
+		}
 		// 打开修改角色弹窗
 		const onOpenEditRole = (row: Object) => {
-			editRoleRef.value.openDialog(row);
-		};
+			editRoleRef.value.openDialog(row)
+		}
 		// 删除角色
 		const onRowDel = (row: Object) => {
 			ElMessageBox.confirm(`此操作将永久删除角色名称：“${row.roleName}”，是否继续?`, '提示', {
@@ -109,22 +109,22 @@ export default {
 				type: 'warning',
 			})
 				.then(() => {
-					ElMessage.success('删除成功');
+					ElMessage.success('删除成功')
 				})
-				.catch(() => {});
-		};
+				.catch(() => {})
+		}
 		// 分页改变
 		const onHandleSizeChange = (val: number) => {
-			state.tableData.param.pageSize = val;
-		};
+			state.tableData.param.pageSize = val
+		}
 		// 分页改变
 		const onHandleCurrentChange = (val: number) => {
-			state.tableData.param.pageNum = val;
-		};
+			state.tableData.param.pageNum = val
+		}
 		// 页面加载时
 		onMounted(() => {
-			initTableData();
-		});
+			initTableData()
+		})
 		return {
 			addRoleRef,
 			editRoleRef,
@@ -134,9 +134,9 @@ export default {
 			onHandleSizeChange,
 			onHandleCurrentChange,
 			...toRefs(state),
-		};
+		}
 	},
-};
+}
 </script>
 
 <style scoped lang="scss">

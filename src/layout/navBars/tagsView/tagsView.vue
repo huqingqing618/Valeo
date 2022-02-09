@@ -134,7 +134,8 @@ export default {
 			if (current.length <= 0) {
 				// 防止：Avoid app logic that relies on enumerating keys on a component instance. The keys will be empty in production mode to avoid performance overhead.
 				let findItem = state.tagsViewRoutesList.find((v: any) => v.path === isDynamicPath);
-				if (findItem.meta.isAffix) return false;
+				
+				if (findItem?.meta?.isAffix) return false;
 				if (findItem.meta.isLink && !findItem.meta.isIframe) return false;
 				to.meta.isDynamic ? (findItem.params = to.params) : (findItem.query = to.query);
 				findItem.url = setTagsViewHighlight(findItem);

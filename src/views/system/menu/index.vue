@@ -71,7 +71,9 @@ export default {
 		const store = useStore()
 		const addMenuRef = ref()
 		const editMenuRef = ref()
-		const state = reactive({})
+		const state = reactive({
+			name: '',
+		})
 		// 获取 vuex 中的路由
 		const menuTableData = computed(() => {
 			return store.state.routesList.routesList

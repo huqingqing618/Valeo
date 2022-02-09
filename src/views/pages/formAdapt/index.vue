@@ -85,16 +85,16 @@
 </template>
 
 <script lang="ts">
-import { toRefs, reactive } from 'vue';
+import { toRefs, reactive } from 'vue'
 export default {
 	name: 'pagesFormAdapt',
 	setup() {
 		const state = reactive({
 			form: {},
-		});
+		})
 		return {
 			...toRefs(state),
-		};
+		}
 	},
-};
+}
 </script>

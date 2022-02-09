@@ -13,13 +13,12 @@ import { initBackEndControlRoutes } from '/@/router/backEnd'
  * @method createRouter(options: RouterOptions): Router
  * @link 参考：https://next.router.vuejs.org/zh/api/#createrouter
  */
-let oldMenuList: any = formatTwoStageRoutes(formatFlatteningRoutes(dynamicRoutes))
+// let oldMenuList: any = formatTwoStageRoutes(formatFlatteningRoutes(dynamicRoutes))
 
 const router = createRouter({
 	history: createWebHashHistory(),
-	routes: [...staticRoutes, ...oldMenuList],
+	routes: [...staticRoutes],
 })
-console.log(router)
 
 /**
  * 定义404界面
@@ -89,7 +88,7 @@ export function setCacheTagsViewRoutes() {
 	// 获取有权限的路由，否则 tagsView、菜单搜索中无权限的路由也将显示
 	// let rolesRoutes = setFilterHasRolesMenu(dynamicRoutes, store.state.userInfos.userInfos.roles)
 	// // 添加到 vuex setTagsViewRoutes 中
-	// store.dispatch('tagsViewRoutes/setTagsViewRoutes', formatTwoStageRoutes(formatFlatteningRoutes(rolesRoutes))[0].children)
+	store.dispatch('tagsViewRoutes/setTagsViewRoutes', formatTwoStageRoutes(formatFlatteningRoutes(dynamicRoutes))[0].children)
 }
 
 /**
@@ -219,13 +218,12 @@ router.beforeEach(async (to, from, next) => {
 			next('/home')
 			NProgress.done()
 		} else {
-			console.log(store.state.routesList.routesList)
-
 			//这里拿到的动态路由
 			if (store.state.routesList.routesList.length === 0) {
 				if (isRequestRoutes) {
 					// 		// 后端控制路由：路由数据初始化，防止刷新时丢失
 					await initBackEndControlRoutes()
+
 					// 动态添加路由：防止非首页刷新时跳转回首页的问题
 					// 确保 addRoute() 时动态添加的路由已经被完全加载上去
 					next({ ...to, replace: true })
@@ -235,6 +233,7 @@ router.beforeEach(async (to, from, next) => {
 			}
 		}
 	}
+	console.log(router)
 })
 
 // 路由加载后
