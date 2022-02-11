@@ -1,154 +1,201 @@
 <template>
-	<div class="system-user-container">
+	<div class="system-menu-container">
 		<el-card shadow="hover">
-			<div class="system-user-search mb15">
-				<el-input size="small" placeholder="请输入用户名称" style="max-width: 180px"> </el-input>
-				<el-button size="small" type="primary" class="ml10">
-					<el-icon>
-						<elementSearch />
-					</el-icon>
-					查询
-				</el-button>
-				<el-button size="small" type="success" class="ml10" @click="onOpenAddUser">
-					<el-icon>
-						<elementFolderAdd />
-					</el-icon>
-					新增用户
-				</el-button>
-			</div>
-			<el-table :data="tableData.data" style="width: 100%">
-				<el-table-column type="index" label="序号" width="50" />
-				<el-table-column prop="userName" label="账户名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="userNickname" label="用户昵称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="roleSign" label="关联角色" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="department" label="部门" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="phone" label="手机号" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="email" label="邮箱" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="status" label="用户状态" show-overflow-tooltip>
-					<template #default="scope">
-						<el-tag type="success" v-if="scope.row.status">启用</el-tag>
-						<el-tag type="info" v-else>禁用</el-tag>
-					</template>
-				</el-table-column>
-				<el-table-column prop="describe" label="用户描述" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
-				<el-table-column label="操作" width="100">
-					<template #default="scope">
-						<el-button :disabled="scope.row.userName === 'admin'" size="mini" type="text" @click="onOpenEditUser(scope.row)">修改</el-button>
-						<el-button :disabled="scope.row.userName === 'admin'" size="mini" type="text" @click="onRowDel(scope.row)">删除</el-button>
-					</template>
-				</el-table-column>
-			</el-table>
-			<el-pagination
-				@size-change="onHandleSizeChange"
-				@current-change="onHandleCurrentChange"
-				class="mt15"
-				:pager-count="5"
-				:page-sizes="[10, 20, 30]"
-				v-model:current-page="tableData.param.pageNum"
-				background
-				v-model:page-size="tableData.param.pageSize"
-				layout="total, sizes, prev, pager, next, jumper"
-				:total="tableData.total"
-			>
-			</el-pagination>
+			<myTable :tableList="tableList" :tableLoading="tableLoading">
+				<template v-slot:search> </template>
+				<!-- <template #gender="{ row }">
+					<el-tag :type="['success', 'primary', 'warning'][row.gender - 1]" size="mini">
+						{{ ['男', '女', '保密'][row.gender - 1] }}
+					</el-tag>
+				</template>
+				<template #avatar="{ row }">
+					<el-avatar shape="square" :size="25" :src="row.avatar" />
+				</template>
+				<template #roles="{ row }">
+					<el-tag v-for="item in row.roles" :key="item.id" size="mini" type="primary" :disable-transitions="true">
+						{{ item.name }}
+					</el-tag>
+				</template>
+				<template #status="{ row }">
+					<el-switch v-model="row.status" @change="editStatus(row)" :active-value="1" :inactive-value="2" /> -->
+				<!-- </template> -->
+			</myTable>
 		</el-card>
-		<AddUer ref="addUserRef" />
-		<EditUser ref="editUserRef" />
 	</div>
 </template>
 
 <script lang="ts">
-import { toRefs, reactive, onMounted, ref } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import AddUer from '/@/views/system/user/component/addUser.vue';
-import EditUser from '/@/views/system/user/component/editUser.vue';
-export default {
-	name: 'systemUser',
-	components: { AddUer, EditUser },
+import { defineComponent, reactive, toRefs, provide } from 'vue'
+import { getUserList } from '/@/api/system/index.ts'
+import { filterSlot } from '/@/utils/enumerate.ts'
+import table from '/@/components/table/index.vue'
+export default defineComponent({
+	components: { myTable: table },
 	setup() {
-		const addUserRef = ref();
-		const editUserRef = ref();
-		const state: any = reactive({
-			tableData: {
-				data: [],
-				total: 0,
-				loading: false,
-				param: {
-					pageNum: 1,
-					pageSize: 10,
+		const state = reactive({
+			search: [{ id: 1, type: 'input', value: 'username', label: '用户账号' }],
+			columns: [
+				{
+					columnKey: 'selection',
+					type: 'selection',
+					width: 45,
+					align: 'center',
+					fixed: 'left',
 				},
+				{
+					prop: 'id',
+					label: 'ID',
+					width: 60,
+					align: 'center',
+					showOverflowTooltip: true,
+					fixed: 'left',
+				},
+				{
+					prop: 'username',
+					label: '用户账号',
+					align: 'center',
+					showOverflowTooltip: true,
+					minWidth: 110,
+				},
+				{
+					prop: 'realname',
+					label: '用户姓名',
+					align: 'center',
+					showOverflowTooltip: true,
+					minWidth: 110,
+				},
+				{
+					columnKey: 'avatar',
+					label: '头像',
+					align: 'center',
+					showOverflowTooltip: true,
+					minWidth: 60,
+					slot: 'avatar',
+				},
+				{
+					prop: 'genderName',
+					label: '性别',
+					align: 'center',
+					showOverflowTooltip: true,
+					minWidth: 60,
+					slot: 'gender',
+				},
+				{
+					prop: 'mobile',
+					label: '手机号',
+					align: 'center',
+					showOverflowTooltip: true,
+					minWidth: 110,
+				},
+				{
+					columnKey: 'roles',
+					label: '角色',
+					align: 'center',
+					showOverflowTooltip: true,
+					minWidth: 200,
+					slot: 'roles',
+				},
+				{
+					prop: 'levelName',
+					label: '职级',
+					align: 'center',
+					showOverflowTooltip: true,
+					minWidth: 110,
+				},
+				{
+					prop: 'positionName',
+					label: '岗位',
+					align: 'center',
+					showOverflowTooltip: true,
+					minWidth: 110,
+				},
+				{
+					prop: 'deptName',
+					label: '部门',
+					align: 'center',
+					showOverflowTooltip: true,
+					minWidth: 150,
+				},
+				{
+					prop: 'status',
+					label: '职级状态',
+					align: 'center',
+					width: 100,
+					resizable: false,
+					slot: 'status',
+				},
+				{
+					prop: 'createTime',
+					label: '创建时间',
+					align: 'center',
+					showOverflowTooltip: true,
+					minWidth: 160,
+					//   formatter: (row, column, cellValue) => {
+					//     return this.$util.toDateString(cellValue);
+					//   }
+				},
+				{
+					prop: 'updateTime',
+					label: '更新时间',
+					align: 'center',
+					showOverflowTooltip: true,
+					minWidth: 160,
+					//   formatter: (row, column, cellValue) => {
+					//     return this.$util.toDateString(cellValue);
+					//   }
+				},
+				{
+					columnKey: 'action',
+					label: '操作',
+					width: 220,
+					align: 'center',
+					resizable: false,
+					slot: 'action',
+					fixed: 'right',
+				},
+			],
+			page: {
+				page: 1,
+				total: 0,
+				limit: 10,
 			},
-		});
-		// 初始化表格数据
-		const initTableData = () => {
-			const data: Array<object> = [];
-			for (let i = 0; i < 2; i++) {
-				data.push({
-					userName: i === 0 ? 'admin' : 'test',
-					userNickname: i === 0 ? '我是管理员' : '我是普通用户',
-					roleSign: i === 0 ? 'admin' : 'common',
-					department: i === 0 ? ['vueNextAdmin', 'IT外包服务'] : ['vueNextAdmin', '资本控股'],
-					phone: '12345678910',
-					email: 'vueNextAdmin@123.com',
-					sex: '女',
-					password: '123456',
-					overdueTime: new Date(),
-					status: true,
-					describe: i === 0 ? '不可删除' : '测试用户',
-					createTime: new Date().toLocaleString(),
-				});
-			}
-			state.tableData.data = data;
-			state.tableData.total = state.tableData.data.length;
-		};
-		// 打开新增用户弹窗
-		const onOpenAddUser = () => {
-			addUserRef.value.openDialog();
-		};
-		// 打开修改用户弹窗
-		const onOpenEditUser = (row: Object) => {
-			editUserRef.value.openDialog(row);
-		};
-		// 删除用户
-		const onRowDel = (row: Object) => {
-			ElMessageBox.confirm(`此操作将永久删除账户名称：“${row.userName}”，是否继续?`, '提示', {
-				confirmButtonText: '确认',
-				cancelButtonText: '取消',
-				type: 'warning',
-			})
-				.then(() => {
-					ElMessage.success('删除成功');
-				})
-				.catch(() => {});
-		};
-		// 分页改变
-		const onHandleSizeChange = (val: number) => {
-			state.tableData.param.pageSize = val;
-		};
-		// 分页改变
-		const onHandleCurrentChange = (val: number) => {
-			state.tableData.param.pageNum = val;
-		};
-		// 页面加载时
-		onMounted(() => {
-			initTableData();
-		});
-		return {
-			addUserRef,
-			editUserRef,
-			onOpenAddUser,
-			onOpenEditUser,
-			onRowDel,
-			onHandleSizeChange,
-			onHandleCurrentChange,
-			...toRefs(state),
-		};
-	},
-};
-</script>
+			columnsList: [],
+			tableList: [],
+			tableLoading: false,
+			searchForm: {},
+		})
+		const getTableList = async () => {
+			state.tableLoading = true
+			try {
+				const {
+					data: { records, pages, total },
+				} = await getUserList({ ...state.page, ...state.searchForm })
 
-<style scoped lang="scss">
-.system-user-container {
-}
-</style>
+				state.page.total = total
+				state.tableList = records
+			} finally {
+				state.tableLoading = false
+			}
+		}
+		state.columnsList = filterSlot(state.columns)
+		getTableList()
+		provide('page', state.page)
+		provide('search', state.search)
+		provide('columns', state.columns)
+		provide('columnsList', state.columnsList)
+		//搜索获取数据
+		const queryData = (searchForm: any) => {
+			state.searchForm = searchForm
+			getTableList()
+		}
+		//分页发生改变
+		const pageChange = (pages: Object) => {
+			getTableList()
+		}
+		const editStatus = (row: any) => {}
+		provide('queryData', queryData)
+		provide('pageChange', pageChange)
+		return { ...toRefs(state), queryData, editStatus }
+	},
+})
+</script>

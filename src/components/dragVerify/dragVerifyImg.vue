@@ -142,10 +142,10 @@ export default {
 		},
 	},
 	mounted: function () {
-		const dragEl = this.$refs.dragVerify;
-		dragEl.style.setProperty('--textColor', this.textColor);
-		dragEl.style.setProperty('--width', Math.floor(this.width / 2) + 'px');
-		dragEl.style.setProperty('--pwidth', -Math.floor(this.width / 2) + 'px');
+		const dragEl = this.$refs.dragVerify
+		dragEl.style.setProperty('--textColor', this.textColor)
+		dragEl.style.setProperty('--width', Math.floor(this.width / 2) + 'px')
+		dragEl.style.setProperty('--pwidth', -Math.floor(this.width / 2) + 'px')
 	},
 	computed: {
 		handlerStyle: function () {
@@ -153,44 +153,44 @@ export default {
 				width: this.height + 'px',
 				height: this.height + 'px',
 				background: this.handlerBg,
-			};
+			}
 		},
 		message: function () {
-			return this.isPassing ? '' : this.text;
+			return this.isPassing ? '' : this.text
 		},
 		successMessage: function () {
-			return this.isPassing ? this.successText : '';
+			return this.isPassing ? this.successText : ''
 		},
 		dragVerifyStyle: function () {
-			console.log(this.width, 'width');
+			console.log(this.width, 'width')
 			return {
 				width: this.width + 'px',
 				height: this.height + 'px',
 				lineHeight: this.height + 'px',
 				background: this.background,
 				borderRadius: this.circle ? this.height / 2 + 'px' : this.radius,
-			};
+			}
 		},
 		dragVerifyImgStyle: function () {
 			return {
 				width: this.width + 'px',
 				position: 'relative',
 				overflow: 'hidden',
-			};
+			}
 		},
 		progressBarStyle: function () {
 			return {
 				background: this.progressBarBg,
 				height: this.height + 'px',
 				borderRadius: this.circle ? this.height / 2 + 'px 0 0 ' + this.height / 2 + 'px' : this.radius,
-			};
+			}
 		},
 		textStyle: function () {
 			return {
 				height: this.height + 'px',
 				width: this.width + 'px',
 				fontSize: this.textSize,
-			};
+			}
 		},
 	},
 	data() {
@@ -204,29 +204,29 @@ export default {
 			showBar: false,
 			clipBarx: 0,
 			showErrorTip: false,
-		};
+		}
 	},
 	methods: {
 		checkimgLoaded: function () {
 			//生成图片缺失位置
-			var barWidth = this.barWidth;
-			var barHeight = this.barHeight;
-			var imgHeight = this.$refs.checkImg.height;
-			var halfWidth = Math.floor(this.width / 2);
-			var refreshHeigth = 25;
-			var tipHeight = 20;
-			var x = halfWidth + Math.ceil(Math.random() * (halfWidth - barWidth));
-			var y = refreshHeigth + Math.floor(Math.random() * (imgHeight - barHeight - refreshHeigth - tipHeight));
+			var barWidth = this.barWidth
+			var barHeight = this.barHeight
+			var imgHeight = this.$refs.checkImg.height
+			var halfWidth = Math.floor(this.width / 2)
+			var refreshHeigth = 25
+			var tipHeight = 20
+			var x = halfWidth + Math.ceil(Math.random() * (halfWidth - barWidth))
+			var y = refreshHeigth + Math.floor(Math.random() * (imgHeight - barHeight - refreshHeigth - tipHeight))
 			this.clipbarStyle = {
 				width: barWidth + 'px',
 				height: barHeight + 'px',
 				top: y + 'px',
 				left: x + 'px',
 				'border-radius': this.barRadius + 'px',
-			};
-			this.clipBarx = x;
-			var imgsrc = this.imgsrc;
-			var width = this.width;
+			}
+			this.clipBarx = x
+			var imgsrc = this.imgsrc
+			var width = this.width
 			this.movebarStyle = {
 				background: `url(${imgsrc})`,
 				'background-position': `-${x}px -${y}px`,
@@ -235,99 +235,99 @@ export default {
 				height: barHeight + 'px',
 				top: y + 'px',
 				'border-radius': this.barRadius + 'px',
-			};
+			}
 		},
 		dragStart: function (e) {
 			if (!this.isPassing) {
-				this.isMoving = true;
-				this.x = e.pageX || e.touches[0].pageX;
+				this.isMoving = true
+				this.x = e.pageX || e.touches[0].pageX
 			}
-			this.showBar = true;
-			this.showErrorTip = false;
-			this.$emit('handlerMove');
+			this.showBar = true
+			this.showErrorTip = false
+			this.$emit('handlerMove')
 		},
 		dragMoving: function (e) {
 			if (this.isMoving && !this.isPassing) {
-				var _x = (e.pageX || e.touches[0].pageX) - this.x;
-				var handler = this.$refs.handler;
-				handler.style.left = _x + 'px';
-				this.$refs.progressBar.style.width = _x + this.height / 2 + 'px';
-				this.$refs.moveBar.style.left = _x + 'px';
+				var _x = (e.pageX || e.touches[0].pageX) - this.x
+				var handler = this.$refs.handler
+				handler.style.left = _x + 'px'
+				this.$refs.progressBar.style.width = _x + this.height / 2 + 'px'
+				this.$refs.moveBar.style.left = _x + 'px'
 			}
 		},
 		dragFinish: function (e) {
 			if (this.isMoving && !this.isPassing) {
-				var _x = (e.pageX || e.changedTouches[0].pageX) - this.x;
+				var _x = (e.pageX || e.changedTouches[0].pageX) - this.x
 				if (Math.abs(_x - this.clipBarx) > this.diffWidth) {
-					this.isOk = true;
-					var that = this;
+					this.isOk = true
+					var that = this
 					setTimeout(function () {
-						that.$refs.handler.style.left = '0';
-						that.$refs.progressBar.style.width = '0';
-						that.$refs.moveBar.style.left = '0';
-						that.isOk = false;
-					}, 500);
-					this.showErrorTip = true;
-					this.$emit('passfail');
+						that.$refs.handler.style.left = '0'
+						that.$refs.progressBar.style.width = '0'
+						that.$refs.moveBar.style.left = '0'
+						that.isOk = false
+					}, 500)
+					this.showErrorTip = true
+					this.$emit('passfail')
 				} else {
-					this.passVerify();
+					this.passVerify()
 				}
-				this.isMoving = false;
+				this.isMoving = false
 			}
 		},
 		passVerify: function () {
-			this.$emit('update:isPassing', true);
-			this.isMoving = false;
-			var handler = this.$refs.handler;
-			handler.children[0].className = this.successIcon;
-			this.$refs.progressBar.style.background = this.completedBg;
-			this.$refs.message.style['-webkit-text-fill-color'] = 'unset';
-			this.$refs.message.style.animation = 'slidetounlock2 3s infinite';
-			this.$refs.progressBar.style.color = '#fff';
-			this.$refs.progressBar.style.fontSize = this.textSize;
-			this.isKeep = true;
+			this.$emit('update:isPassing', true)
+			this.isMoving = false
+			var handler = this.$refs.handler
+			handler.children[0].className = this.successIcon
+			this.$refs.progressBar.style.background = this.completedBg
+			this.$refs.message.style['-webkit-text-fill-color'] = 'unset'
+			this.$refs.message.style.animation = 'slidetounlock2 3s infinite'
+			this.$refs.progressBar.style.color = '#fff'
+			this.$refs.progressBar.style.fontSize = this.textSize
+			this.isKeep = true
 			setTimeout(() => {
-				this.$refs.moveBar.style.left = this.clipBarx + 'px';
+				this.$refs.moveBar.style.left = this.clipBarx + 'px'
 				setTimeout(() => {
-					this.isKeep = false;
-				}, 200);
-			}, 100);
-			this.$emit('passcallback');
+					this.isKeep = false
+				}, 200)
+			}, 100)
+			this.$emit('passcallback')
 		},
 		reset: function () {
-			this.reImg();
-			this.checkimgLoaded();
+			this.reImg()
+			this.checkimgLoaded()
 		},
 		reImg: function () {
-			this.$emit('update:isPassing', false);
-			const oriData = this.$options.data();
+			this.$emit('update:isPassing', false)
+			const oriData = this.$options.data()
 			for (const key in oriData) {
 				if (Object.prototype.hasOwnProperty.call(oriData, key)) {
-					this[key] = oriData[key];
+					this[key] = oriData[key]
 				}
 			}
-			var handler = this.$refs.handler;
-			var message = this.$refs.message;
-			handler.style.left = '0';
-			this.$refs.progressBar.style.width = '0';
-			handler.children[0].className = this.handlerIcon;
-			message.style['-webkit-text-fill-color'] = 'transparent';
-			message.style.animation = 'slidetounlock 3s infinite';
-			message.style.color = this.background;
+			var handler = this.$refs.handler
+			var message = this.$refs.message
+			handler.style.left = '0'
+			this.$refs.progressBar.style.width = '0'
+			handler.children[0].className = this.handlerIcon
+			message.style['-webkit-text-fill-color'] = 'transparent'
+			message.style.animation = 'slidetounlock 3s infinite'
+			message.style.color = this.background
 		},
 		refreshimg: function () {
-			this.$emit('refresh');
+			this.$emit('refresh')
 		},
 	},
 	watch: {
 		imgsrc: {
 			immediate: false,
 			handler: function () {
-				this.reImg();
+				this.reImg()
 			},
 		},
 	},
-};
+}
 </script>
 <style scoped>
 .drag_verify {

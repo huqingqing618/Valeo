@@ -1,9 +1,18 @@
 <template>
 	<div class="system-menu-container">
 		<el-card shadow="hover">
-			<myTable :tableList="tableList">
+			<myTable :tableList="tableList" :tableLoading="tableLoading">
 				<template v-slot:search> </template>
-				<template v-slot:tableColumn> </template>
+				<template v-slot:type="{ row }">
+					<el-tag :type="['success', 'danger', 'warning', 'info'][row.type - 1]" size="mini">
+						{{ ['登录系统', '注销系统', '操作日志'][row.type - 1] }}
+					</el-tag>
+				</template>
+				<template v-slot:status="{ row }">
+					<el-tag :type="['success', 'danger'][row.status]" size="mini">
+						{{ ['操作成功', '操作失败'][row.status] }}
+					</el-tag>
+				</template>
 			</myTable>
 		</el-card>
 	</div>
@@ -12,19 +21,13 @@
 <script lang="ts">
 import { defineComponent, reactive, toRefs, provide } from 'vue'
 import { getLoginlogList } from '/@/api/system/loginlog.ts'
-import { operlogSex, operlogOccupation } from '/@/utils/enumerate.ts'
+import { filterSlot } from '/@/utils/enumerate.ts'
 import table from '/@/components/table/index.vue'
 export default defineComponent({
 	components: { myTable: table },
 	setup() {
 		const state = reactive({
-			search: [
-				{ id: 1, type: 'input', value: 'name', label: '姓名' },
-				{ id: 2, type: 'select', value: 'occupation', label: '职务', enum: operlogOccupation },
-				{ id: 3, type: 'input', value: 'phone', label: '手机' },
-				{ id: 4, type: 'select', value: 'sex', label: '性别', enum: operlogSex },
-				{ id: 5, type: 'datePicker', value: 'date', label: '日期' },
-			],
+			search: [{ id: 1, type: 'input', value: 'username', label: '用户账号' }],
 			columns: [
 				{
 					columnKey: 'selection',
@@ -117,27 +120,46 @@ export default defineComponent({
 					fixed: 'right',
 				},
 			],
-			tableList: [],
 			page: {
 				page: 1,
-				pages: 0,
+				total: 0,
 				limit: 10,
 			},
+			columnsList: [],
+			tableList: null,
+			tableLoading: false,
+			searchForm: {},
 		})
 		const getTableList = async () => {
-			const {
-				data: { records, pages },
-			} = await getLoginlogList({ ...state.page })
-			state.page.pages = pages
-			state.tableList = records
+			state.tableLoading = true
+			try {
+				const {
+					data: { records, pages, total },
+				} = await getLoginlogList({ ...state.page, ...state.searchForm })
+
+				state.page.total = total
+				state.tableList = records
+			} finally {
+				state.tableLoading = false
+			}
 		}
+		state.columnsList = filterSlot(state.columns)
 		getTableList()
-		const queryData = (searchForm: any) => {}
-		provide('queryData', queryData)
+		provide('page', state.page)
 		provide('search', state.search)
 		provide('columns', state.columns)
-		// provide('tableList', state.tableList)
-
+		provide('columnsList', state.columnsList)
+		//搜索获取数据
+		const queryData = (searchForm: any) => {
+			state.searchForm = searchForm
+			getTableList()
+		}
+		//分页发生改变
+		const pageChange = (pages: Object) => {
+			getTableList()
+		}
+		provide('queryData', queryData)
+		provide('pageChange', pageChange)
 		return { ...toRefs(state), queryData }
 	},
 })

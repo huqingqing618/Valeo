@@ -13,11 +13,13 @@ const userInfosModule: Module<UserInfosState, RootStateTypes> = {
 	},
 	mutations: {
 		// 设置用户信息
-		getUserInfos(state: any, data: object) {
+		setUserInfo(state: any, data: object) {
 			state.userInfos = data
 		},
-		setToken(state: any, payload: string) {
-			state.token = payload
+		setToken(state: any, payload: any) {
+			state.token = payload.access_token
+			Session.set('token', payload.access_token)
+			Session.set('token_type', payload.token_type)
 		},
 	},
 	actions: {
@@ -38,11 +40,9 @@ const userInfosModule: Module<UserInfosState, RootStateTypes> = {
 
 		async userLogin({ commit }, params: object) {
 			const { data } = await signIn(params)
-			Session.set('token', data.access_token)
-			Session.set('token_type', data.token_type)
-			commit('setToken', data.access_token)
+			commit('setToken', data)
 			const res = await getUserInfo()
-			commit('getUserInfos', res.data)
+			commit('setUserInfo', res.data)
 		},
 	},
 }

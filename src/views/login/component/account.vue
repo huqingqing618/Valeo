@@ -56,14 +56,15 @@
 			</el-button>
 		</el-form-item>
 		<el-form-item class="login-animation-five">
-			<el-button type="text" size="small">{{ $t('message.link.one3') }}</el-button>
-			<el-button type="text" size="small">{{ $t('message.link.two4') }}</el-button>
+			<!-- 第三方友情链接 -->
+			<!-- <el-button type="text" size="small">{{ $t('message.link.one3') }}</el-button>
+			<el-button type="text" size="small">{{ $t('message.link.two4') }}</el-button> -->
 		</el-form-item>
 	</el-form>
 </template>
 
 <script lang="ts">
-import { toRefs, reactive, defineComponent, computed, getCurrentInstance } from 'vue'
+import { toRefs, reactive, defineComponent, computed, getCurrentInstance, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
@@ -78,8 +79,8 @@ export default defineComponent({
 		const { t } = useI18n()
 		const { proxy } = getCurrentInstance() as any
 		const store = useStore()
-		const route = useRoute()
-		const router = useRouter()
+		const route: any = useRoute()
+		const router: any = useRouter()
 		const state = reactive({
 			isShowPassword: false,
 			ruleForm: {
@@ -101,9 +102,10 @@ export default defineComponent({
 		const onSignIn = async () => {
 			state.loading.signIn = true
 			await store.dispatch('userInfo/userLogin', state.ruleForm)
-			if (!store.state.themeConfig.themeConfig.isRequestRoutes) {
+			if (store.state.themeConfig.themeConfig.isRequestRoutes) {
 				await initBackEndControlRoutes()
 			}
+			await signInSuccess()
 			//使用vuex去存储用户信息
 			// 模拟数据
 			// state.loading.signIn = true
@@ -136,38 +138,24 @@ export default defineComponent({
 			// 	roles: defaultRoles,
 			// 	authBtnList: defaultAuthBtnList,
 			// }
-			// // 存储 token 到浏览器缓存
-			// Session.set('token', Math.random().toString(36).substr(0))
-			// // 存储用户信息到浏览器缓存
-			// Session.set('userInfo', userInfos)
-			// // 1、请注意执行顺序(存储用户信息到vuex)
-			// store.dispatch('userInfos/setUserInfos', userInfos)
-			// if (!store.state.themeConfig.themeConfig.isRequestRoutes) {
-			// 	// 前端控制路由，2、请注意执行顺序
-			// 	await initFrontEndControlRoutes()
-			// 	signInSuccess()
-			// } else {
-			// 	// 模拟后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
-			// 	// 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
-			// 	await initBackEndControlRoutes()
-			// 	// 执行完 initBackEndControlRoutes，再执行 signInSuccess
-			signInSuccess()
-			// }
 		}
 		// 登录成功后的跳转
-		const signInSuccess = () => {
+		const signInSuccess = async () => {
 			// 初始化登录成功时间问候语
 			let currentTimeInfo = currentTime.value
 			// 登录成功，跳到转首页
 			// 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
 			// 如果是复制粘贴的路径，非首页/登录页，那么登录成功后重定向到对应的路径中
+			console.log(route.query?.redirect, 9999)
 			if (route.query?.redirect) {
 				router.push({
 					path: route.query?.redirect + '',
 					query: Object.keys(route.query?.params).length > 0 ? JSON.parse(route.query?.params) : '',
 				})
 			} else {
-				router.push('/')
+				setTimeout(() => {
+					router.push('/')
+				})
 			}
 			// 登录成功提示
 			setTimeout(() => {

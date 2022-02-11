@@ -22,3 +22,7 @@ export const operlogOccupation = [
 		value: '2',
 	},
 ]
+//过滤是否有插槽
+export const filterSlot = (columns: Array<any>) => {
+	return columns.filter((item) => item.slot).map((item) => item.slot)
+}

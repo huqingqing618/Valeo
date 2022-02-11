@@ -1,8 +1,5 @@
 <template>
 	<div class="login-container">
-		<div class="login-logo">
-			<span>{{ getThemeConfig.globalViceTitle }}</span>
-		</div>
 		<div class="login-content">
 			<div class="login-content-main">
 				<h4 class="login-content-title">{{ getThemeConfig.globalTitle }}后台模板</h4>
@@ -11,21 +8,19 @@
 						<el-tab-pane :label="$t('message.label.one1')" name="account">
 							<Account />
 						</el-tab-pane>
-						<el-tab-pane :label="$t('message.label.two2')" name="mobile">
+						<!-- 手机号登录 -->
+						<!-- <el-tab-pane :label="$t('message.label.two2')" name="mobile">
 							<Mobile />
-						</el-tab-pane>
+						</el-tab-pane> -->
 					</el-tabs>
 				</div>
 				<Scan v-if="isScan" />
-				<div class="login-content-main-sacn" @click="isScan = !isScan">
+				<!-- 扫描二维码登录 -->
+				<!-- <div class="login-content-main-sacn" @click="isScan = !isScan">
 					<i class="iconfont" :class="isScan ? 'icon-diannao1' : 'icon-barcode-qr'"></i>
 					<div class="login-content-main-sacn-delta"></div>
-				</div>
+				</div> -->
 			</div>
-		</div>
-		<div class="login-copyright">
-			<div class="mb5 login-copyright-company">{{ $t('message.copyright.one5') }}</div>
-			<div class="login-copyright-msg">{{ $t('message.copyright.two6') }}</div>
 		</div>
 	</div>
 </template>

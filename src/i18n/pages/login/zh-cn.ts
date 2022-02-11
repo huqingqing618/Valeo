@@ -25,4 +25,4 @@ export default {
 		btnText: '登 录',
 	},
 	signInText: '欢迎回来！',
-};
+}

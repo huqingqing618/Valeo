@@ -4,7 +4,7 @@
 			<el-row :gutter="35">
 				<el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="mb15" v-for="v in search" :key="v.id">
 					<el-form-item :label="v.label" v-if="v.type === 'input'">
-						<el-input v-model="form[v.value]" placeholder="请输入姓名" clearable></el-input>
+						<el-input @keydown.enter="query" v-model="form[v.value]" :placeholder="`请输入${v.label}`" clearable></el-input>
 					</el-form-item>
 					<el-form-item :label="v.label" v-else-if="v.type === 'select'">
 						<el-select v-model="form[v.value]" placeholder="请选择职务" clearable class="w100">
@@ -17,8 +17,18 @@
 				</el-col>
 				<slot name="search"></slot>
 				<el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" class="mb15">
-					<el-button type="primary" size="small" @click="query">查询</el-button>
-					<el-button type="primary" size="small">清空</el-button>
+					<el-button type="primary" size="small" @click="query">
+						<el-icon>
+							<elementSearch />
+						</el-icon>
+						查询</el-button
+					>
+					<el-button type="success" size="small" @click="clearForm">
+						<el-icon>
+							<elementDelete />
+						</el-icon>
+						清空</el-button
+					>
 				</el-col>
 			</el-row>
 		</el-form>
@@ -41,15 +51,21 @@ export default {
 	},
 	emits: ['queryData'],
 	setup(props, content) {
-		const form: object = reactive({})
+		let form: any = reactive({})
 		let queryData: any = inject('queryData')
 		const query = () => {
 			queryData(form)
+		}
+		const clearForm = () => {
+			Object.keys(form).forEach((item) => {
+				form[item] = null
+			})
 		}
 		return {
 			form,
 			query,
 			queryData,
+			clearForm,
 		}
 	},
 }

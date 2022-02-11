@@ -198,7 +198,7 @@ export function resetRoute() {
 const { isRequestRoutes } = store.state.themeConfig.themeConfig
 
 // 前端控制路由：初始化方法，防止刷新时路由丢失
-if (!isRequestRoutes) initFrontEndControlRoutes()
+// if (!isRequestRoutes) initFrontEndControlRoutes()
 
 // 路由加载前
 router.beforeEach(async (to, from, next) => {
@@ -233,7 +233,6 @@ router.beforeEach(async (to, from, next) => {
 			}
 		}
 	}
-	console.log(router)
 })
 
 // 路由加载后

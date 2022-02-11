@@ -32,7 +32,12 @@ export async function initBackEndControlRoutes() {
 	store.dispatch('userInfo/setUserInfos')
 	// 获取路由菜单数据
 	const res = await getBackEndControlRoutes()
+	console.log(res)
+
 	const { menus } = formatMenus(res.data, null)
+	menus.forEach((item: any) => {
+		dynamicRoutes[0].children?.push(item)
+	})
 
 	// menus.forEach((item: any) => {
 	// 	item.component = "import('/src/layout/index.vue')"
@@ -41,9 +46,7 @@ export async function initBackEndControlRoutes() {
 	store.dispatch('requestOldRoutes/setBackEndControlRoutes', JSON.parse(JSON.stringify(menus)))
 	// // 处理路由（component），替换 dynamicRoutes（/@/router/route）第一个顶级 children 的路由
 	// dynamicRoutes[0].children = await backEndComponent(menus)
-	menus.forEach((item: any) => {
-		dynamicRoutes[0].children?.push(item)
-	})
+	console.log(menus, 9999)
 
 	// // 添加动态路由
 	await setAddRoute()
@@ -110,7 +113,9 @@ export function dynamicImport(dynamicViewsModules: Record<string, Function>, com
 		return dynamicViewsModules[matchKey]
 	}
 	if (matchKeys?.length > 1) {
-		return false
+		const matchKey = matchKeys[0]
+		return dynamicViewsModules[matchKey]
+		// return false
 	}
 }
 
@@ -119,9 +124,10 @@ export function formatMenus(data: any, parseMenuItem: any) {
 	let home: any = null,
 		menus = formatTreeData(data, (d: any) => {
 			let item = parseMenuItem ? parseMenuItem(d) : Object.assign({}, d)
+
 			item.meta = Object.assign(
 				{
-					title: item.title,
+					title: 'message.router.home',
 					icon: 'iconfont icon-quanxian',
 					hide: item.hide,
 					active: item.active || item.uid,
@@ -167,7 +173,6 @@ export function formatMenus(data: any, parseMenuItem: any) {
 			} else {
 				item.component = dynamicImport(dynamicViewsModules, item.component as string)
 			}
-
 			return item
 		})
 	return {

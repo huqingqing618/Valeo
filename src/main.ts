@@ -1,22 +1,23 @@
-import { createApp } from 'vue';
-import App from './App.vue';
-import router from './router';
-import { store, key } from './store';
-import { directive } from '/@/utils/directive';
-import { i18n } from '/@/i18n/index';
-import other from '/@/utils/other';
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
+import { store, key } from './store'
+import { directive } from '/@/utils/directive'
+import { i18n } from '/@/i18n/index'
+import other from '/@/utils/other'
 
-import ElementPlus from 'element-plus';
-import 'element-plus/dist/index.css';
-import '/@/theme/index.scss';
-import mitt from 'mitt';
-import screenShort from 'vue-web-screen-shot';
-import VueGridLayout from 'vue-grid-layout';
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import '/@/theme/index.scss'
+import mitt from 'mitt'
+import screenShort from 'vue-web-screen-shot'
+import VueGridLayout from 'vue-grid-layout'
+import myComponents from '/@/components'
 
-const app = createApp(App);
+const app = createApp(App)
 
-directive(app);
-other.elSvg(app);
+directive(app)
+other.elSvg(app)
 
 app
 	.use(router)
@@ -25,6 +26,7 @@ app
 	.use(i18n)
 	.use(screenShort, { enableWebRtc: false })
 	.use(VueGridLayout)
-	.mount('#app');
+	.use(myComponents)
+	.mount('#app')
 
-app.config.globalProperties.mittBus = mitt();
+app.config.globalProperties.mittBus = mitt()

@@ -31,12 +31,12 @@
 </template>
 
 <script lang="ts">
-import { toRefs, reactive, onBeforeMount, getCurrentInstance } from 'vue';
-import { ElMessage } from 'element-plus';
+import { toRefs, reactive, onBeforeMount, getCurrentInstance } from 'vue'
+import { ElMessage } from 'element-plus'
 export default {
 	name: 'pagesTree',
 	setup() {
-		const { proxy } = getCurrentInstance() as any;
+		const { proxy } = getCurrentInstance() as any
 		const state = reactive({
 			treeCheckAll: false,
 			treeLoading: false,
@@ -47,41 +47,41 @@ export default {
 			},
 			treeSelArr: [],
 			treeLength: 0,
-		});
+		})
 		// 初始化树的长度
 		const initTreeLengh = (arr: any) => {
-			let count = 0;
+			let count = 0
 			arr.map((item) => {
 				if (item.children) {
-					count += item.children.length;
+					count += item.children.length
 				}
-			});
-			state.treeLength = count + arr.length;
-		};
+			})
+			state.treeLength = count + arr.length
+		}
 		// 全选改变时
 		const onCheckAllChange = () => {
 			if (state.treeCheckAll) {
-				proxy.$refs.treeTable.setCheckedNodes(state.treeTableData);
+				proxy.$refs.treeTable.setCheckedNodes(state.treeTableData)
 			} else {
-				proxy.$refs.treeTable.setCheckedKeys([]);
+				proxy.$refs.treeTable.setCheckedKeys([])
 			}
-		};
+		}
 		// 节点选中状态发生变化时的回调
 		const onCheckTree = () => {
-			state.treeSelArr = [];
-			state.treeSelArr = proxy.$refs.treeTable.getCheckedNodes();
-			state.treeSelArr.length == state.treeLength ? (state.treeCheckAll = true) : (state.treeCheckAll = false);
-		};
+			state.treeSelArr = []
+			state.treeSelArr = proxy.$refs.treeTable.getCheckedNodes()
+			state.treeSelArr.length == state.treeLength ? (state.treeCheckAll = true) : (state.treeCheckAll = false)
+		}
 		// 选择元素按钮
 		const onSelect = () => {
-			let treeArr = proxy.$refs.treeTable.getCheckedNodes();
+			let treeArr = proxy.$refs.treeTable.getCheckedNodes()
 			if (treeArr.length <= 0) {
-				ElMessage.warning('请选择元素');
-				return;
+				ElMessage.warning('请选择元素')
+				return
 			} else {
 				// console.log(proxy.$refs.treeTable.getCheckedNodes());
 			}
-		};
+		}
 		// 初始化树模拟数据
 		const getTreeData = () => {
 			state.treeTableData = [
@@ -143,22 +143,22 @@ export default {
 						},
 					],
 				},
-			];
-			initTreeLengh(state.treeTableData);
-		};
+			]
+			initTreeLengh(state.treeTableData)
+		}
 		// 页面加载前
 		onBeforeMount(() => {
-			getTreeData();
-		});
+			getTreeData()
+		})
 		return {
 			getTreeData,
 			onCheckAllChange,
 			onCheckTree,
 			onSelect,
 			...toRefs(state),
-		};
+		}
 	},
-};
+}
 </script>
 
 <style scoped lang="scss">
