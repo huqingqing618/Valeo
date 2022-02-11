@@ -4,7 +4,8 @@ import { NextLoading } from '/@/utils/loading'
 import { setAddRoute, setFilterMenuAndCacheTagsViewRoutes } from '/@/router/index'
 import { dynamicRoutes } from '/@/router/route'
 import { getMenuAdmin, getMenuTest } from '/@/api/menu/index'
-
+import { filterRouteTitle } from '/@/utils/router'
+import i18nTitle from '/@/i18n/lang/zh-cn'
 const layouModules: any = import.meta.glob('../layout/routerView/*.{vue,tsx}')
 const viewsModules: any = import.meta.glob('../views/**/*.{vue,tsx}')
 /**
@@ -124,10 +125,11 @@ export function formatMenus(data: any, parseMenuItem: any) {
 	let home: any = null,
 		menus = formatTreeData(data, (d: any) => {
 			let item = parseMenuItem ? parseMenuItem(d) : Object.assign({}, d)
+			console.log()
 
 			item.meta = Object.assign(
 				{
-					title: 'message.router.home',
+					title: filterRouteTitle(item, i18nTitle.router),
 					icon: 'iconfont icon-quanxian',
 					hide: item.hide,
 					active: item.active || item.uid,

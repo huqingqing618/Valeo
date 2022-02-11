@@ -72,6 +72,19 @@ export default {
 		tools: '工具类集合',
 		layoutLinkView: '外链',
 		layoutIfameView: '内嵌 iframe',
+		//后端返回
+		controlPanel: '控制面板',
+		workbench: '工作台',
+		dataAnalysis: '数据分析',
+		systemManagement: '系统管理',
+		screenMonitor: '大屏监控',
+		rankManagement: '职级管理',
+		postManagement: '岗位管理',
+		loginLog: '登录日志',
+		operationLog: '操作日志',
+		userinfo: '用户信息',
+
+		complaintManagement: '投诉管理',
 	},
 	staticRoutes: {
 		signIn: '登录',
@@ -178,4 +191,4 @@ export default {
 		copyTextSuccess: '复制成功！',
 		copyTextError: '复制失败！',
 	},
-};
+}
