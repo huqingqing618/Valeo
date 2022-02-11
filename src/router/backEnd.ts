@@ -107,7 +107,7 @@ export function dynamicImport(dynamicViewsModules: Record<string, Function>, com
 		const k = key.replace(/..\/views|../, '')
 		return k.startsWith(`${component}`) || k.startsWith(`/${component}`)
 	})
-	console.log(matchKeys)
+	// console.log(matchKeys)
 
 	if (matchKeys?.length === 1) {
 		const matchKey = matchKeys[0]

@@ -9,6 +9,14 @@ export const getUserList = (params: object) => {
 	})
 }
 
+export const addUser = (data: object) => {
+	return request({
+		url: 'user/add',
+		method: 'POST',
+		data,
+	})
+}
+
 // 获取角色信息
 export const getRoleList = (params: object) => {
 	return request({

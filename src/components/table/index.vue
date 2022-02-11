@@ -8,8 +8,7 @@
 		<el-card class="min73vh">
 			<template #header>
 				<div>
-					<span>Card name</span>
-					<el-button class="button" type="text">Operation button</el-button>
+					<slot name="headerBtn"> </slot>
 				</div>
 			</template>
 			<my-table :tableList="tableList" :tableLoading="tableLoading">
@@ -56,6 +55,9 @@ export default defineComponent({
 .my-table {
 	::v-deep(.el-card) {
 		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) !important;
+		.el-card__header {
+			padding: 8px;
+		}
 	}
 }
 </style>

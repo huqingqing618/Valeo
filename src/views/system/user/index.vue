@@ -3,7 +3,10 @@
 		<el-card shadow="hover">
 			<myTable :tableList="tableList" :tableLoading="tableLoading">
 				<template v-slot:search> </template>
-				<!-- <template #gender="{ row }">
+				<template #headerBtn>
+					<el-button type="primary" icon="elementPlus" size="small" @click="addUser">添加</el-button>
+				</template>
+				<template #gender="{ row }">
 					<el-tag :type="['success', 'primary', 'warning'][row.gender - 1]" size="mini">
 						{{ ['男', '女', '保密'][row.gender - 1] }}
 					</el-tag>
@@ -12,25 +15,26 @@
 					<el-avatar shape="square" :size="25" :src="row.avatar" />
 				</template>
 				<template #roles="{ row }">
-					<el-tag v-for="item in row.roles" :key="item.id" size="mini" type="primary" :disable-transitions="true">
+					<el-tag v-for="item in row.roles" :key="item.id" size="mini" :disable-transitions="true">
 						{{ item.name }}
 					</el-tag>
 				</template>
 				<template #status="{ row }">
-					<el-switch v-model="row.status" @change="editStatus(row)" :active-value="1" :inactive-value="2" /> -->
-				<!-- </template> -->
+					<el-switch v-model="row.status" @change="editStatus(row)" :active-value="1" :inactive-value="2" />
+				</template>
 			</myTable>
+			<addUser ref="addUserRef" />
 		</el-card>
 	</div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, provide } from 'vue'
+import { defineComponent, reactive, toRefs, provide, ref } from 'vue'
 import { getUserList } from '/@/api/system/index.ts'
 import { filterSlot } from '/@/utils/enumerate.ts'
-import table from '/@/components/table/index.vue'
+import addUser from './component/addUser.vue'
 export default defineComponent({
-	components: { myTable: table },
+	components: { addUser },
 	setup() {
 		const state = reactive({
 			search: [{ id: 1, type: 'input', value: 'username', label: '用户账号' }],
@@ -164,6 +168,7 @@ export default defineComponent({
 			tableLoading: false,
 			searchForm: {},
 		})
+		const addUserRef: any = ref(null)
 		const getTableList = async () => {
 			state.tableLoading = true
 			try {
@@ -193,9 +198,16 @@ export default defineComponent({
 			getTableList()
 		}
 		const editStatus = (row: any) => {}
+		const addUser = () => {
+			onOpenAddDic()
+		}
+		// 打开新增用户
+		const onOpenAddDic = () => {
+			addUserRef.value.openDialog()
+		}
 		provide('queryData', queryData)
 		provide('pageChange', pageChange)
-		return { ...toRefs(state), queryData, editStatus }
+		return { ...toRefs(state), queryData, addUser, editStatus, addUserRef }
 	},
 })
 </script>

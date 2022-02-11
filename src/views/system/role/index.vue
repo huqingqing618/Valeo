@@ -21,7 +21,7 @@
 				</template>
 				<template #action="{ row }">
 					<el-link type="primary" :underline="false" icon="elementEdit" @click="openEdit(row)"> 修改 </el-link>
-					<el-link type="primary" :underline="false" icon="elementFinished" @click="openAuth(row)" class="ml152 mr15">分配权限 </el-link>
+					<el-link type="primary" :underline="false" icon="elementFinished" @click="openAuth(row)" class="ml15 mr15">分配权限 </el-link>
 					<el-popconfirm class="ele-action" title="确定要删除此角色吗？" @confirm="remove(row)">
 						<template v-slot:reference>
 							<el-link type="danger" :underline="false" icon="elementDelete">删除 </el-link>
